@@ -17,6 +17,12 @@
 import * as vscode from 'vscode';
 import { getMessage } from '../utils/localization';
 
+/**
+ * FLOW - Input Component Name
+ * 
+ * Prompts the user to input their target component name(s) to enrich.
+ * This supports wildcards (*) to enrich all matching components.
+ */
 export async function inputComponentName(typeLabel: string): Promise<string[] | undefined> {
   const componentNameInput = await vscode.window.showInputBox({
     prompt: getMessage('Enter the component name (use * to enrich all {0} components)', typeLabel),

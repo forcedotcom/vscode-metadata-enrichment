@@ -26,6 +26,13 @@ export type EligibleComponents = {
   componentsEligibleToProcess: SourceComponent[];
 };
 
+/**
+ * FLOW - Build Eligible Components
+ * 
+ * Given a list of metadata entries, digs through the local DX project and collates matching source components.
+ * This includes verifying if the components are eligible for enrichment.
+ * Displays both pop-up and output channel messages to the user if components are not found or skipped.
+ */
 export async function buildEligibleComponents(
   metadataEntries: string[],
   project: SfProject,

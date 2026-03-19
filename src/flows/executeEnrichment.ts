@@ -21,9 +21,10 @@ import { EnrichmentHandler, EnrichmentMetrics, EnrichmentRecords, FileProcessor 
 import { getMessage } from '../utils/localization';
 
 /**
- * Runs stages 2 and 3 of the enrichment pipeline (enrich + update files) and
- * reports results to the output channel.  Callers are responsible for stage 1
- * (building the component set, skip detection, and filtering eligible components).
+ * FLOW - Execute Enrichment
+ * 
+ * Executes enrichment for the given project source components and org connection.
+ * Reports formatted results to the output channel and also displays pop-up messages to the user.
  */
 export async function executeEnrichment(
   componentsEligibleToProcess: SourceComponent[],

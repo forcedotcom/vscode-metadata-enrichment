@@ -23,9 +23,11 @@ export type OrgConnection = {
 };
 
 /**
- * Lists all locally authenticated orgs and prompts the user to select one.
- * Returns the org connection for the selected org, or undefined if the user
- * cancels or no orgs are authenticated.
+ * FLOW - Connect to Org
+ * 
+ * Lists all the locally authenticated orgs in the user's DX project. 
+ * Prompts the user to select one and returns the corresponding org connection
+ * Displays pop-up message to user if no orgs are found.
  */
 export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
   let auths: Awaited<ReturnType<typeof AuthInfo.listAllAuthorizations>>;

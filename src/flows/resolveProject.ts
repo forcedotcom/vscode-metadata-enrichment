@@ -18,6 +18,12 @@ import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
 import { getMessage } from '../utils/localization';
 
+/**
+ * FLOW - Resolve Project
+ * 
+ * Resolves the Salesforce DX project folder and returns the project instance.
+ * Displays pop-up error to user if no workspace folder is open.
+ */
 export async function resolveProject(): Promise<SfProject | undefined> {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
   if (!workspaceFolder) {
