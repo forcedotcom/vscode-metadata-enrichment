@@ -1,5 +1,32 @@
 # Developing
 
+## Yarn Setup
+
+This project uses yarn classic (v1.x)
+
+You can install yarn a couple of ways:
+
+... via npm:
+```
+npm install --global yarn
+```
+
+... via HomeBrew:
+```
+brew install yarn
+```
+
+Use yarn classic
+```
+yarn set version classic
+```
+
+Verify your version is v1.x
+```
+yarn --version
+```
+
+
 ## Install
 
 Pull in dependencies in your local project
@@ -8,7 +35,7 @@ Pull in dependencies in your local project
 yarn install 
 ```
 
-## Build:
+## Build
 
 Build and compile
 
@@ -16,7 +43,7 @@ Build and compile
 yarn build
 ```
 
-## Run Tests:
+## Run Tests
 
 Run the jest unit tests
 

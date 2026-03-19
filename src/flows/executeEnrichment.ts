@@ -42,27 +42,10 @@ export async function executeEnrichment(
   enrichmentRecords.updateWithResults(Array.from(fileUpdatedRecords));
 
   const metrics = EnrichmentMetrics.createEnrichmentMetrics(Array.from(enrichmentRecords.recordSet));
-
-  // Basic allowlist of symbols that can be decoded from the component's enriched description
-  const decodeEntities = (s: string) => s
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'");
-
-  const descriptionMap = new Map<string, string>();
-  for (const record of enrichmentRecords.recordSet) {
-    const description = record.response?.results?.[0]?.description;
-    if (description) {
-      descriptionMap.set(record.componentName, decodeEntities(description));
-    }
-  }
-
-  reportResults(outputChannel, metrics, descriptionMap);
+  reportResults(outputChannel, metrics);
 }
 
-export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics, descriptionMap: Map<string, string>): void {
+export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
   outputChannel.appendLine('');
   outputChannel.appendLine(getMessage(
     'command.metadata.enrich.log.complete',
@@ -81,10 +64,6 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
       outputChannel.appendLine('');
       outputChannel.appendLine(`  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`);
       outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.status', row.status)}`);
-      const description = descriptionMap.get(row.componentName);
-      if (description) {
-        outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.description', description)}`);
-      }
       if (row.requestId) {
         outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.requestId', row.requestId)}`);
       }

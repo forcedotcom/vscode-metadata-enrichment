@@ -21,12 +21,12 @@ import { getMessage } from '../utils/localization';
  * FLOW - Input Component Names
  *
  * Prompts the user to input one or more target component names to enrich,
- * comma-separated. Supports wildcards (*) to enrich all matching components.
+ * comma-separated. Supports wildcards (*) for fuzzy matching components.
  * Deduplicates and trims whitespaces from user input.
  */
 export async function inputComponentNames(typeLabel: string): Promise<string[] | undefined> {
   const input = await vscode.window.showInputBox({
-    prompt: getMessage('command.metadata.enrich.input.component.prompt', typeLabel),
+    prompt: getMessage('command.metadata.enrich.input.component.prompt'),
     placeHolder: getMessage('command.metadata.enrich.input.component.placeholder'),
     ignoreFocusOut: true,
     validateInput: value => (value.trim() ? null : getMessage('command.metadata.enrich.input.component.validation'))

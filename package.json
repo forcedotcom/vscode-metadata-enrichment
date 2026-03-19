@@ -38,7 +38,8 @@
     "@salesforce/core": "^8.24.3",
     "@salesforce/metadata-enrichment": "^0.0.11",
     "@salesforce/source-deploy-retrieve": "^12.31.14",
-    "concat-map": "^0.0.2"
+    "concat-map": "^0.0.2",
+    "minimatch": "^9.0.5"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
@@ -69,7 +70,7 @@
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
     "prettier-check": "prettier --check .",
-    "clean": "tsc --build --clean && rm -rf lib dist *.vsix",
+    "clean": "tsc --build --clean && rm -rf lib dist node_modules *.vsix",
     "test": "jest"
   }
 }

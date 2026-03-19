@@ -28,9 +28,10 @@ export type EligibleComponents = {
 
 /**
  * FLOW - Build Eligible Components
- * 
+ *
  * Given a list of metadata entries, digs through the local DX project and collates matching source components.
- * This includes verifying if the components are eligible for enrichment.
+ * Also verifies if the components are eligible for enrichment.
+ * Uses the common metadata-enrichment library to do the retrieval and eligibility checks.
  * Displays both pop-up and output channel messages to the user if components are not found or skipped.
  */
 export async function buildEligibleComponents(
