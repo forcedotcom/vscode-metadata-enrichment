@@ -33,7 +33,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const typeItem = await pickMetadataType();
     if (!typeItem) {
-      vscode.window.showInformationMessage(getMessage('Metadata enrichment was cancelled.'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
       return;
     }
 
@@ -42,7 +42,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const metadataEntries = await inputComponentName(typeItem.label);
     if (!metadataEntries) {
-      vscode.window.showInformationMessage(getMessage('Metadata enrichment was cancelled.'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
       return;
     }
 
@@ -51,7 +51,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const orgResult = await pickOrgAndConnect();
     if (!orgResult) {
-      vscode.window.showInformationMessage(getMessage('Metadata enrichment was cancelled.'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
       return;
     }
 
@@ -72,14 +72,14 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: getMessage('Salesforce: Enriching Metadata'),
+          title: getMessage('command.metadata.enrich.progress.title'),
           cancellable: false
         },
         async progress => {
-          progress.report({ message: getMessage('Setting up...') });
+          progress.report({ message: getMessage('command.metadata.enrich.progress.setup') });
           outputChannel.appendLine('');
-          outputChannel.appendLine(getMessage('[Metadata Enrichment] Starting enrichment for: {0}', metadataEntries[0]));
-          outputChannel.appendLine(getMessage('[Metadata Enrichment] Target org: {0}', orgResult.username));
+          outputChannel.appendLine(getMessage('command.metadata.enrich.log.starting', metadataEntries[0]));
+          outputChannel.appendLine(getMessage('command.metadata.enrich.log.targetOrg', orgResult.username));
 
           const eligibleResult = await buildEligibleComponents(metadataEntries, project, outputChannel);
           if (!eligibleResult) {
@@ -88,7 +88,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
 
           const { enrichmentRecords, componentsEligibleToProcess } = eligibleResult;
           outputChannel.appendLine(
-            getMessage('[Metadata Enrichment] {0} component(s) eligible for enrichment.', String(componentsEligibleToProcess.length))
+            getMessage('command.metadata.enrich.log.eligibleComponents', String(componentsEligibleToProcess.length))
           );
 
           await executeEnrichment(componentsEligibleToProcess, enrichmentRecords, orgResult.connection, outputChannel, progress);
@@ -96,8 +96,8 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      vscode.window.showErrorMessage(getMessage('Metadata enrichment failed: {0}', message));
-      outputChannel.appendLine(getMessage('[Metadata Enrichment] ERROR: {0}', message));
+      vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.failed', message));
+      outputChannel.appendLine(getMessage('command.metadata.enrich.log.error', message));
       outputChannel.show();
     }
   });

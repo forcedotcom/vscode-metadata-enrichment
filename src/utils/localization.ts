@@ -15,12 +15,14 @@
  */
 
 import * as vscode from 'vscode';
+import nls from '../../package.nls.json';
 
-export function getMessage(message: string, ...args: string[]): string {
-  if (!message) {
+export function getMessage(key: string, ...args: string[]): string {
+  if (!key) {
     return '';
   }
   try {
+    const message = (nls as Record<string, string>)[key] ?? key;
     return vscode.l10n.t(message, ...args);
   } catch {
     return '';

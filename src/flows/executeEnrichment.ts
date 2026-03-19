@@ -33,11 +33,11 @@ export async function executeEnrichment(
   outputChannel: vscode.OutputChannel,
   progress: vscode.Progress<{ message?: string }>
 ): Promise<void> {
-  progress.report({ message: getMessage('Sending enrichment requests...') });
+  progress.report({ message: getMessage('command.metadata.enrich.progress.executing') });
   const enrichmentResults = await EnrichmentHandler.enrich(connection, componentsEligibleToProcess);
   enrichmentRecords.updateWithResults(enrichmentResults);
 
-  progress.report({ message: getMessage('Updating metadata files...') });
+  progress.report({ message: getMessage('command.metadata.enrich.progress.updating') });
   const fileUpdatedRecords = await FileProcessor.updateMetadata(componentsEligibleToProcess, enrichmentRecords.recordSet);
   enrichmentRecords.updateWithResults(Array.from(fileUpdatedRecords));
 
@@ -93,15 +93,15 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
 
   if (metrics.fail.count > 0) {
     vscode.window.showWarningMessage(
-      getMessage('Metadata enrichment completed with {0} failure(s). See Output panel for details.', String(metrics.fail.count))
+      getMessage('command.metadata.enrich.warn.completedWithFailures', String(metrics.fail.count))
     );
   } else if (metrics.success.count > 0) {
     vscode.window.showInformationMessage(
-      getMessage('Metadata enrichment complete. {0} component(s) enriched successfully.', String(metrics.success.count))
+      getMessage('command.metadata.enrich.info.success', String(metrics.success.count))
     );
   } else {
     vscode.window.showInformationMessage(
-      getMessage('Metadata enrichment complete. No components were enriched (all skipped).')
+      getMessage('command.metadata.enrich.info.allSkipped')
     );
   }
 }

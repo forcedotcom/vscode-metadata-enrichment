@@ -25,10 +25,10 @@ import { getMessage } from '../utils/localization';
  */
 export async function inputComponentName(typeLabel: string): Promise<string[] | undefined> {
   const componentNameInput = await vscode.window.showInputBox({
-    prompt: getMessage('Enter the component name (use * to enrich all {0} components)', typeLabel),
-    placeHolder: getMessage('e.g. myLwcComponent  or  *'),
+    prompt: getMessage('command.metadata.enrich.input.component.prompt', typeLabel),
+    placeHolder: getMessage('command.metadata.enrich.input.component.placeholder'),
     ignoreFocusOut: true,
-    validateInput: value => (value.trim() ? null : getMessage('Component name is required'))
+    validateInput: value => (value.trim() ? null : getMessage('command.metadata.enrich.input.component.validation'))
   });
   if (componentNameInput === undefined) {
     return undefined;

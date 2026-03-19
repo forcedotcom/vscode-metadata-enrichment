@@ -17,9 +17,9 @@
 import { getMessage } from '../../src/utils/localization';
 
 describe('getMessage', () => {
-  it('returns the localized string with substituted arguments', () => {
-    const result = getMessage('Hello {0}, you have {1} message(s).', 'Alice', '3');
-    expect(result).toBe('Hello Alice, you have 3 message(s).');
+  it('returns the localized string for a valid NLS key with substituted arguments', () => {
+    const result = getMessage('command.metadata.enrich.log.starting', 'myComp');
+    expect(result).toBe('[Metadata Enrichment] Starting enrichment for: myComp');
   });
 
   it('returns an empty string when the message is empty', () => {

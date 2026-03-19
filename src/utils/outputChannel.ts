@@ -21,7 +21,7 @@ let channel: vscode.OutputChannel | undefined;
 
 export function getOutputChannel(): vscode.OutputChannel {
   if (!channel) {
-    channel = vscode.window.createOutputChannel(getMessage('Salesforce Metadata Enrichment'));
+    channel = vscode.window.createOutputChannel(getMessage('output.channel.name'));
   }
   return channel;
 }

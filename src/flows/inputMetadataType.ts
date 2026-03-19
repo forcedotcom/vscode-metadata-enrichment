@@ -26,7 +26,7 @@ import { getMessage } from '../utils/localization';
  */
 export async function pickMetadataType(): Promise<vscode.QuickPickItem | undefined> {
   return vscode.window.showQuickPick(SUPPORTED_METADATA_TYPES, {
-    placeHolder: getMessage('Select the metadata type to enrich'),
+    placeHolder: getMessage('command.metadata.enrich.pick.type.placeholder'),
     ignoreFocusOut: true
   });
 }

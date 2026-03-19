@@ -27,7 +27,7 @@ import { getMessage } from '../utils/localization';
 export async function resolveProject(): Promise<SfProject | undefined> {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
   if (!workspaceFolder) {
-    vscode.window.showErrorMessage(getMessage('No workspace folder is open. Open a Salesforce DX project folder and try again.'));
+    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.noWorkspace'));
     return undefined;
   }
   return SfProject.resolve(workspaceFolder.uri.fsPath);

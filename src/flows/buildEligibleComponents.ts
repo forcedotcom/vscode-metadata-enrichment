@@ -49,15 +49,15 @@ export async function buildEligibleComponents(
 
   if (projectSourceComponents.length === 0) {
     vscode.window.showWarningMessage(
-      getMessage('No components found matching "{0}". Verify the type and component name are correct.', metadataEntries[0])
+      getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0])
     );
-    outputChannel.appendLine(getMessage('[Metadata Enrichment] No components found for "{0}".', metadataEntries[0]));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.log.noComponents', metadataEntries[0]));
     outputChannel.show();
     return undefined;
   }
 
   outputChannel.appendLine(
-    getMessage('[Metadata Enrichment] Found {0} component(s). Checking eligibility...', String(projectSourceComponents.length))
+    getMessage('command.metadata.enrich.log.foundComponents', String(projectSourceComponents.length))
   );
 
   const enrichmentRecords = new EnrichmentRecords(projectSourceComponents);
@@ -83,8 +83,8 @@ export async function buildEligibleComponents(
   });
 
   if (componentsEligibleToProcess.length === 0) {
-    vscode.window.showWarningMessage(getMessage('All matched components were skipped. Check the Output panel for details.'));
-    outputChannel.appendLine(getMessage('[Metadata Enrichment] All components were skipped.'));
+    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
     outputChannel.show();
     return undefined;
   }

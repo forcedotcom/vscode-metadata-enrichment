@@ -16,6 +16,7 @@
 
 import * as vscode from 'vscode';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
+import { getMessage } from '../utils/localization';
 
 export type OrgConnection = {
   username: string;
@@ -35,14 +36,12 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     auths = await AuthInfo.listAllAuthorizations();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    vscode.window.showErrorMessage(`Failed to list authenticated orgs: ${message}`);
+    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.listOrgsFailed', message));
     return undefined;
   }
 
   if (auths.length === 0) {
-    vscode.window.showErrorMessage(
-      'No authenticated Salesforce orgs found. Run "sf org login web" or "sf org login device" to authenticate.'
-    );
+    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.noOrgs'));
     return undefined;
   }
 
@@ -52,7 +51,7 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
   }));
 
   const selected = await vscode.window.showQuickPick(items, {
-    placeHolder: 'Select a target Salesforce org',
+    placeHolder: getMessage('command.metadata.enrich.pick.org.placeholder'),
     ignoreFocusOut: true
   });
 
