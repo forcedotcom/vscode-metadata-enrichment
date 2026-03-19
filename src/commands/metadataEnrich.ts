@@ -16,7 +16,7 @@
 
 import * as vscode from 'vscode';
 import { pickMetadataType } from '../flows/inputMetadataType';
-import { inputComponentName } from '../flows/inputComponentName';
+import { inputComponentNames } from '../flows/inputComponentNames';
 import { pickOrgAndConnect } from '../flows/connectToOrg';
 import { resolveProject } from '../flows/resolveProject';
 import { buildEligibleComponents } from '../flows/buildEligibleComponents';
@@ -40,7 +40,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
     /**
      * Step #2 - Prompt user to input target component name(s) to enrich
      */
-    const metadataEntries = await inputComponentName(typeItem.label);
+    const metadataEntries = await inputComponentNames(typeItem.label);
     if (!metadataEntries) {
       vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
       return;

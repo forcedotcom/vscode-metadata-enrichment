@@ -15,24 +15,25 @@
  */
 
 import type { QuickPickItem } from 'vscode';
+import { getMessage } from '../utils/localization';
 
 export const METADATA_ENRICH_COMMAND = 'sf.metadata.enrich';
 
 export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
   {
     label: 'FlexiPage',
-    description: 'FlexiPage'
+    description: getMessage('command.metadata.enrich.type.flexipage')
   },
   {
     label: 'LightningComponentBundle',
-    description: 'Lightning Web Component (LWC)'
+    description: getMessage('command.metadata.enrich.type.lwc')
   },
   {
     label: 'LightningType',
-    description: 'Lightning Type'
+    description: getMessage('command.metadata.enrich.type.lightningtype')
   },
   {
     label: 'SalesforceObject',
-    description: 'Salesforce Object (Standard or Custom)'
+    description: getMessage('command.metadata.enrich.type.salesforceobject')
   }
 ];

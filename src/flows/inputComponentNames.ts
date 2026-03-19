@@ -18,20 +18,31 @@ import * as vscode from 'vscode';
 import { getMessage } from '../utils/localization';
 
 /**
- * FLOW - Input Component Name
- * 
- * Prompts the user to input their target component name(s) to enrich.
- * This supports wildcards (*) to enrich all matching components.
+ * FLOW - Input Component Names
+ *
+ * Prompts the user to input one or more target component names to enrich,
+ * comma-separated. Supports wildcards (*) to enrich all matching components.
+ * Deduplicates and trims whitespaces from user input.
  */
-export async function inputComponentName(typeLabel: string): Promise<string[] | undefined> {
-  const componentNameInput = await vscode.window.showInputBox({
+export async function inputComponentNames(typeLabel: string): Promise<string[] | undefined> {
+  const input = await vscode.window.showInputBox({
     prompt: getMessage('command.metadata.enrich.input.component.prompt', typeLabel),
     placeHolder: getMessage('command.metadata.enrich.input.component.placeholder'),
     ignoreFocusOut: true,
     validateInput: value => (value.trim() ? null : getMessage('command.metadata.enrich.input.component.validation'))
   });
-  if (componentNameInput === undefined) {
+  if (input === undefined) {
     return undefined;
   }
-  return [`${typeLabel}:${componentNameInput.trim()}`];
+
+  const stripQuotes = (s: string) => s.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+
+  // Trim whitespace, strip surrounding quotes, then deduplicate
+  return [...new Set(
+    input
+      .split(',')
+      .map(name => stripQuotes(name.trim()))
+      .filter(name => name.length > 0)
+      .map(name => `${typeLabel}:${name}`)
+  )];
 }

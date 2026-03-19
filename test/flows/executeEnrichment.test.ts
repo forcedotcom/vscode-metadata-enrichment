@@ -66,7 +66,7 @@ describe('reportResults', () => {
   it('writes summary lines and shows a success notification', () => {
     (vscode.window.showInformationMessage as jest.Mock).mockReturnValue(undefined);
 
-    reportResults(mockOutputChannel as any, mockMetrics as any);
+    reportResults(mockOutputChannel as any, mockMetrics as any, new Map());
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
       expect.stringContaining('Enrichment complete. Total: 1')
@@ -74,6 +74,16 @@ describe('reportResults', () => {
     expect(mockOutputChannel.show).toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
       expect.stringContaining('1 component(s) enriched successfully')
+    );
+  });
+
+  it('prints the generated description when present in the description map', () => {
+    const descriptionMap = new Map([['myComp', 'Manages contact records and related data.']]);
+
+    reportResults(mockOutputChannel as any, mockMetrics as any, descriptionMap);
+
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining('Manages contact records and related data.')
     );
   });
 });

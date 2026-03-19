@@ -20,7 +20,7 @@ import { METADATA_ENRICH_COMMAND } from '../../src/constants/constants';
 import { registerMetadataEnrichCommand } from '../../src/commands/metadataEnrich';
 
 jest.mock('../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
-jest.mock('../../src/flows/inputComponentName', () => ({ inputComponentName: jest.fn() }));
+jest.mock('../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
 jest.mock('../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
 jest.mock('../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
 jest.mock('../../src/flows/buildEligibleComponents', () => ({ buildEligibleComponents: jest.fn() }));
@@ -32,7 +32,7 @@ jest.mock('../../src/flows/executeEnrichment', () => ({
 }));
 
 import { pickMetadataType } from '../../src/flows/inputMetadataType';
-import { inputComponentName } from '../../src/flows/inputComponentName';
+import { inputComponentNames } from '../../src/flows/inputComponentNames';
 import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
 import { resolveProject } from '../../src/flows/resolveProject';
 import { buildEligibleComponents } from '../../src/flows/buildEligibleComponents';
@@ -53,21 +53,21 @@ describe('registerMetadataEnrichCommand', () => {
     return registerSpy.mock.calls[0][1] as () => Promise<void>;
   };
 
-  it('shows cancellation message and returns early when inputComponentName returns undefined', async () => {
+  it('shows cancellation message and returns early when inputComponentNames returns undefined', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
-    (inputComponentName as jest.Mock).mockResolvedValue(undefined);
+    (inputComponentNames as jest.Mock).mockResolvedValue(undefined);
 
     const handler = registerAndGetHandler();
     await handler();
 
-    expect(inputComponentName).toHaveBeenCalled();
+    expect(inputComponentNames).toHaveBeenCalled();
     expect(pickOrgAndConnect).not.toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Metadata enrichment was cancelled.');
   });
 
   it('shows cancellation message and returns early when pickOrgAndConnect returns undefined', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
-    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (inputComponentNames as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
     (pickOrgAndConnect as jest.Mock).mockResolvedValue(undefined);
 
     const handler = registerAndGetHandler();
@@ -80,7 +80,7 @@ describe('registerMetadataEnrichCommand', () => {
 
   it('shows cancellation message and returns early when resolveProject returns undefined', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
-    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (inputComponentNames as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
     (pickOrgAndConnect as jest.Mock).mockResolvedValue({ username: 'user@test.com', connection: mockConnection });
     (resolveProject as jest.Mock).mockResolvedValue(undefined);
 
@@ -98,13 +98,13 @@ describe('registerMetadataEnrichCommand', () => {
     const handler = registerAndGetHandler();
     await handler();
 
-    expect(inputComponentName).not.toHaveBeenCalled();
+    expect(inputComponentNames).not.toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Metadata enrichment was cancelled.');
   });
 
   it('stops after buildEligibleComponents returns undefined and does not call executeEnrichment', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
-    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (inputComponentNames as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
     (pickOrgAndConnect as jest.Mock).mockResolvedValue({ username: 'user@test.com', connection: mockConnection });
     (resolveProject as jest.Mock).mockResolvedValue({ getPath: () => '/workspace' });
     (buildEligibleComponents as jest.Mock).mockResolvedValue(undefined);
@@ -123,7 +123,7 @@ describe('registerMetadataEnrichCommand', () => {
 
   it('calls each flow in sequence then executes enrichment', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
-    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (inputComponentNames as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
     (pickOrgAndConnect as jest.Mock).mockResolvedValue({ username: 'user@test.com', connection: mockConnection });
     (resolveProject as jest.Mock).mockResolvedValue({ getPath: () => '/workspace' });
     (buildEligibleComponents as jest.Mock).mockResolvedValue(mockEligibleResult);
@@ -137,7 +137,7 @@ describe('registerMetadataEnrichCommand', () => {
     await handler();
 
     expect(pickMetadataType).toHaveBeenCalled();
-    expect(inputComponentName).toHaveBeenCalledWith('LightningComponentBundle');
+    expect(inputComponentNames).toHaveBeenCalledWith('LightningComponentBundle');
     expect(pickOrgAndConnect).toHaveBeenCalled();
     expect(resolveProject).toHaveBeenCalled();
     expect(buildEligibleComponents).toHaveBeenCalled();

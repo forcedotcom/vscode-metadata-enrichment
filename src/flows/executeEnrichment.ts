@@ -42,49 +42,47 @@ export async function executeEnrichment(
   enrichmentRecords.updateWithResults(Array.from(fileUpdatedRecords));
 
   const metrics = EnrichmentMetrics.createEnrichmentMetrics(Array.from(enrichmentRecords.recordSet));
-  reportResults(outputChannel, metrics);
+
+  const descriptionMap = new Map<string, string>();
+  for (const record of enrichmentRecords.recordSet) {
+    const description = record.response?.results?.[0]?.description;
+    if (description) {
+      descriptionMap.set(record.componentName, description);
+    }
+  }
+
+  reportResults(outputChannel, metrics, descriptionMap);
 }
 
-export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
-  const colWidths = { status: 10, type: 30, component: 40, requestId: 38, message: 50 };
-  const separator = '-'.repeat(
-    colWidths.status + colWidths.type + colWidths.component + colWidths.requestId + colWidths.message + 8
-  );
-
-  const padCol = (str: string, width: number) => (str ?? '').slice(0, width).padEnd(width);
-
-  const header =
-    `${padCol('Status', colWidths.status)}  ` +
-    `${padCol('Type', colWidths.type)}  ` +
-    `${padCol('Component', colWidths.component)}  ` +
-    `${padCol('Request ID', colWidths.requestId)}  ` +
-    `${padCol('Message', colWidths.message)}`;
-
+export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics, descriptionMap: Map<string, string>): void {
   outputChannel.appendLine('');
-  outputChannel.appendLine(`[Metadata Enrichment] Enrichment complete. Total: ${metrics.total}`);
-  outputChannel.appendLine(
-    `  Success: ${metrics.success.count}  |  Skipped: ${metrics.skipped.count}  |  Failed: ${metrics.fail.count}`
-  );
+  outputChannel.appendLine(getMessage(
+    'command.metadata.enrich.log.complete',
+    String(metrics.total), String(metrics.success.count),
+    String(metrics.skipped.count), String(metrics.fail.count)
+  ));
 
   if (metrics.total > 0) {
-    outputChannel.appendLine('');
-    outputChannel.appendLine(header);
-    outputChannel.appendLine(separator);
-
     const allRows = [
-      ...metrics.success.components.map(c => ({ status: 'Success', ...c })),
-      ...metrics.skipped.components.map(c => ({ status: 'Skipped', ...c })),
-      ...metrics.fail.components.map(c => ({ status: 'Failed', ...c }))
+      ...metrics.success.components.map(c => ({ status: getMessage('command.metadata.enrich.status.success'), ...c })),
+      ...metrics.skipped.components.map(c => ({ status: getMessage('command.metadata.enrich.status.skipped'), ...c })),
+      ...metrics.fail.components.map(c => ({ status: getMessage('command.metadata.enrich.status.failed'), ...c }))
     ];
 
     for (const row of allRows) {
-      outputChannel.appendLine(
-        `${padCol(row.status, colWidths.status)}  ` +
-          `${padCol(row.typeName, colWidths.type)}  ` +
-          `${padCol(row.componentName, colWidths.component)}  ` +
-          `${padCol(row.requestId ?? '', colWidths.requestId)}  ` +
-          `${padCol(row.message ?? '', colWidths.message)}`
-      );
+      outputChannel.appendLine('');
+      outputChannel.appendLine(`  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`);
+      outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.status', row.status)}`);
+      const description = descriptionMap.get(row.componentName);
+      if (description) {
+        outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.description', description)}`);
+      }
+      if (row.requestId) {
+        outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.requestId', row.requestId)}`);
+      }
+      if (row.message) {
+        outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.message', row.message)}`);
+      }
     }
   }
 
