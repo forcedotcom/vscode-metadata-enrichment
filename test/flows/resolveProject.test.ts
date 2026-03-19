@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
 import { resolveProject } from '../../src/flows/resolveProject';
 
@@ -30,5 +31,20 @@ describe('resolveProject', () => {
 
     expect(SfProject.resolve).toHaveBeenCalledWith('/workspace');
     expect(result).toBe(mockProject);
+  });
+
+  it('shows an error and returns undefined when no workspace folder is open', async () => {
+    const original = vscode.workspace.workspaceFolders;
+    (vscode.workspace as any).workspaceFolders = undefined;
+
+    const result = await resolveProject();
+
+    expect(result).toBeUndefined();
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
+      expect.stringContaining('No workspace folder')
+    );
+    expect(SfProject.resolve).not.toHaveBeenCalled();
+
+    (vscode.workspace as any).workspaceFolders = original;
   });
 });

@@ -45,4 +45,29 @@ describe('buildEligibleComponents', () => {
     expect(EnrichmentRecords).toHaveBeenCalledWith([mockComponent]);
     expect(SourceComponentProcessor.getComponentsToSkip).toHaveBeenCalled();
   });
+
+  it('returns undefined and shows a warning when no source components are found', async () => {
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [] })
+    });
+
+    const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
+
+  it('returns undefined and shows a warning when all components are skipped', async () => {
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [mockComponent] })
+    });
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([
+      { componentName: 'myComp' }
+    ]);
+
+    const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
 });

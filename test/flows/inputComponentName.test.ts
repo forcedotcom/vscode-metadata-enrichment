@@ -26,4 +26,13 @@ describe('inputComponentName', () => {
     expect(vscode.window.showInputBox).toHaveBeenCalledWith(expect.objectContaining({ ignoreFocusOut: true }));
     expect(result).toEqual(['LightningComponentBundle:myComp']);
   });
+
+  it('returns the validation message when input is blank', async () => {
+    (vscode.window.showInputBox as jest.Mock).mockResolvedValue('myComp');
+    await inputComponentName('LightningComponentBundle');
+
+    const call = (vscode.window.showInputBox as jest.Mock).mock.calls[0][0];
+    expect(call.validateInput('   ')).toBe('Component name is required');
+    expect(call.validateInput('myComp')).toBeNull();
+  });
 });

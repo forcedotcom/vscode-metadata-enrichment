@@ -25,4 +25,10 @@ describe('getMessage', () => {
   it('returns an empty string when the message is empty', () => {
     expect(getMessage('')).toBe('');
   });
+
+  it('returns an empty string when vscode.l10n.t throws', () => {
+    const vscode = require('vscode');
+    (vscode.l10n.t as jest.Mock).mockImplementationOnce(() => { throw new Error('l10n unavailable'); });
+    expect(getMessage('command.metadata.enrich.cancelled')).toBe('');
+  });
 });

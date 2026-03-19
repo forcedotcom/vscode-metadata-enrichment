@@ -37,4 +37,28 @@ describe('pickOrgAndConnect', () => {
     expect(result).toEqual({ username: 'user@test.com', connection: mockConnection });
     expect(Org.create).toHaveBeenCalledWith({ aliasOrUsername: 'user@test.com' });
   });
+
+  it('shows an error and returns undefined when no authenticated orgs are found', async () => {
+    (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([]);
+
+    const result = await pickOrgAndConnect();
+
+    expect(result).toBeUndefined();
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
+      expect.stringContaining('No authenticated Salesforce orgs found')
+    );
+    expect(Org.create).not.toHaveBeenCalled();
+  });
+
+  it('returns undefined when the user cancels the org QuickPick', async () => {
+    (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([
+      { username: 'user@test.com', aliases: [] }
+    ]);
+    (vscode.window.showQuickPick as jest.Mock).mockResolvedValue(undefined);
+
+    const result = await pickOrgAndConnect();
+
+    expect(result).toBeUndefined();
+    expect(Org.create).not.toHaveBeenCalled();
+  });
 });

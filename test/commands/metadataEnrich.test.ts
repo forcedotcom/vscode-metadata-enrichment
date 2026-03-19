@@ -53,6 +53,45 @@ describe('registerMetadataEnrichCommand', () => {
     return registerSpy.mock.calls[0][1] as () => Promise<void>;
   };
 
+  it('shows cancellation message and returns early when inputComponentName returns undefined', async () => {
+    (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
+    (inputComponentName as jest.Mock).mockResolvedValue(undefined);
+
+    const handler = registerAndGetHandler();
+    await handler();
+
+    expect(inputComponentName).toHaveBeenCalled();
+    expect(pickOrgAndConnect).not.toHaveBeenCalled();
+    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Metadata enrichment was cancelled.');
+  });
+
+  it('shows cancellation message and returns early when pickOrgAndConnect returns undefined', async () => {
+    (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
+    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (pickOrgAndConnect as jest.Mock).mockResolvedValue(undefined);
+
+    const handler = registerAndGetHandler();
+    await handler();
+
+    expect(pickOrgAndConnect).toHaveBeenCalled();
+    expect(resolveProject).not.toHaveBeenCalled();
+    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Metadata enrichment was cancelled.');
+  });
+
+  it('shows cancellation message and returns early when resolveProject returns undefined', async () => {
+    (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
+    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (pickOrgAndConnect as jest.Mock).mockResolvedValue({ username: 'user@test.com', connection: mockConnection });
+    (resolveProject as jest.Mock).mockResolvedValue(undefined);
+
+    const handler = registerAndGetHandler();
+    await handler();
+
+    expect(resolveProject).toHaveBeenCalled();
+    expect(buildEligibleComponents).not.toHaveBeenCalled();
+    expect(executeEnrichment).not.toHaveBeenCalled();
+  });
+
   it('shows cancellation message and returns early when pickMetadataType returns undefined', async () => {
     (pickMetadataType as jest.Mock).mockResolvedValue(undefined);
 
@@ -61,6 +100,25 @@ describe('registerMetadataEnrichCommand', () => {
 
     expect(inputComponentName).not.toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Metadata enrichment was cancelled.');
+  });
+
+  it('stops after buildEligibleComponents returns undefined and does not call executeEnrichment', async () => {
+    (pickMetadataType as jest.Mock).mockResolvedValue({ label: 'LightningComponentBundle' });
+    (inputComponentName as jest.Mock).mockResolvedValue(['LightningComponentBundle:myComp']);
+    (pickOrgAndConnect as jest.Mock).mockResolvedValue({ username: 'user@test.com', connection: mockConnection });
+    (resolveProject as jest.Mock).mockResolvedValue({ getPath: () => '/workspace' });
+    (buildEligibleComponents as jest.Mock).mockResolvedValue(undefined);
+    (vscode.window.withProgress as jest.Mock).mockImplementation(
+      async (_opts: any, task: (p: vscodeTypes.Progress<{ message?: string }>) => Promise<void>) => {
+        return task({ report: jest.fn() });
+      }
+    );
+
+    const handler = registerAndGetHandler();
+    await handler();
+
+    expect(buildEligibleComponents).toHaveBeenCalled();
+    expect(executeEnrichment).not.toHaveBeenCalled();
   });
 
   it('calls each flow in sequence then executes enrichment', async () => {
