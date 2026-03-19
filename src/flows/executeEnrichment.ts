@@ -43,11 +43,19 @@ export async function executeEnrichment(
 
   const metrics = EnrichmentMetrics.createEnrichmentMetrics(Array.from(enrichmentRecords.recordSet));
 
+  // Basic allowlist of symbols that can be decoded from the component's enriched description
+  const decodeEntities = (s: string) => s
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+
   const descriptionMap = new Map<string, string>();
   for (const record of enrichmentRecords.recordSet) {
     const description = record.response?.results?.[0]?.description;
     if (description) {
-      descriptionMap.set(record.componentName, description);
+      descriptionMap.set(record.componentName, decodeEntities(description));
     }
   }
 

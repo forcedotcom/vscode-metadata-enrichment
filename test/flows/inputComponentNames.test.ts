@@ -47,8 +47,8 @@ describe('inputComponentNames', () => {
     expect(result).toEqual(['LightningComponentBundle:*']);
   });
 
-  it('strips surrounding quotes from component names', async () => {
-    (vscode.window.showInputBox as jest.Mock).mockResolvedValue('"comp1", \'comp2\'');
+  it('strips double quotes from component names', async () => {
+    (vscode.window.showInputBox as jest.Mock).mockResolvedValue('"comp1", "comp2"');
 
     const result = await inputComponentNames('LightningComponentBundle');
 

@@ -60,6 +60,26 @@ describe('executeEnrichment', () => {
     expect(FileProcessor.updateMetadata).toHaveBeenCalledWith(mockComponents, mockEnrichmentRecords.recordSet);
     expect(mockEnrichmentRecords.updateWithResults).toHaveBeenCalledTimes(2);
   });
+
+  it('decodes HTML entities in the description before printing', async () => {
+    (EnrichmentHandler.enrich as jest.Mock).mockResolvedValue(mockEnrichmentResults);
+    (FileProcessor.updateMetadata as jest.Mock).mockResolvedValue(new Set(mockEnrichmentResults));
+    (EnrichmentMetrics.createEnrichmentMetrics as jest.Mock).mockReturnValue(mockMetrics);
+    const encodedRecord = {
+      componentName: 'myComp',
+      response: { results: [{ description: 'Handles &lt;contacts&gt; &amp; &quot;accounts&quot;' }] }
+    };
+    const mockEnrichmentRecords = {
+      updateWithResults: jest.fn(),
+      recordSet: new Set([encodedRecord])
+    } as any;
+
+    await executeEnrichment(mockComponents, mockEnrichmentRecords, mockConnection, mockOutputChannel as any, mockProgress as any);
+
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining('Handles <contacts> & "accounts"')
+    );
+  });
 });
 
 describe('reportResults', () => {

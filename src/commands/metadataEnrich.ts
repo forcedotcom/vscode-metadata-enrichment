@@ -78,7 +78,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
         async progress => {
           progress.report({ message: getMessage('command.metadata.enrich.progress.setup') });
           outputChannel.appendLine('');
-          outputChannel.appendLine(getMessage('command.metadata.enrich.log.starting', metadataEntries[0]));
+          outputChannel.appendLine(getMessage('command.metadata.enrich.log.starting', metadataEntries.join(', ')));
           outputChannel.appendLine(getMessage('command.metadata.enrich.log.targetOrg', orgResult.username));
 
           const eligibleResult = await buildEligibleComponents(metadataEntries, project, outputChannel);

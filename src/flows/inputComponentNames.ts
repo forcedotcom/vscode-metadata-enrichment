@@ -35,13 +35,11 @@ export async function inputComponentNames(typeLabel: string): Promise<string[] |
     return undefined;
   }
 
-  const stripQuotes = (s: string) => s.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-
-  // Trim whitespace, strip surrounding quotes, then deduplicate
+  // Trim whitespace, strip quotes, and deduplicate component names
   return [...new Set(
     input
       .split(',')
-      .map(name => stripQuotes(name.trim()))
+      .map(name => name.trim().replace(/"/g, ''))
       .filter(name => name.length > 0)
       .map(name => `${typeLabel}:${name}`)
   )];
