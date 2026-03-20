@@ -38,5 +38,5 @@
   "command.metadata.enrich.type.flexipage": "FlexiPage",
   "command.metadata.enrich.type.lwc": "Lightning Web Component (LWC)",
   "command.metadata.enrich.type.lightningtype": "Lightning Type",
-  "command.metadata.enrich.type.salesforceobject": "Salesforce Object (Standard or Custom)"
+  "command.metadata.enrich.type.customobject": "Custom Object"
 }

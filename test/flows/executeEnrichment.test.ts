@@ -78,5 +78,51 @@ describe('reportResults', () => {
     );
   });
 
+  it('logs skipped and failed component rows and shows a warning when there are failures', () => {
+    const metricsWithFailures = {
+      total: 3,
+      success: {
+        count: 1,
+        components: [{ typeName: 'LightningComponentBundle', componentName: 'goodComp', requestId: 'req-1', message: '' }]
+      },
+      skipped: {
+        count: 1,
+        components: [{ typeName: 'LightningComponentBundle', componentName: 'skippedComp', requestId: '', message: 'Already up to date' }]
+      },
+      fail: {
+        count: 1,
+        components: [{ typeName: 'LightningComponentBundle', componentName: 'failedComp', requestId: 'req-2', message: 'Enrichment API error' }]
+      }
+    };
 
+    reportResults(mockOutputChannel as any, metricsWithFailures as any);
+
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('skippedComp'));
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Skipped'));
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Message: Already up to date'));
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('failedComp'));
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Failed'));
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Message: Enrichment API error'));
+    expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(
+      expect.stringContaining('1 failure(s)')
+    );
+  });
+
+  it('logs a component message field when it is non-empty', () => {
+    const metricsWithMessage = {
+      total: 1,
+      success: {
+        count: 1,
+        components: [{ typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }]
+      },
+      skipped: { count: 0, components: [] },
+      fail: { count: 0, components: [] }
+    };
+
+    reportResults(mockOutputChannel as any, metricsWithMessage as any);
+
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining('Message: Field populated from org')
+    );
+  });
 });

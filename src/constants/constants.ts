@@ -33,7 +33,7 @@ export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
     description: getMessage('command.metadata.enrich.type.lightningtype')
   },
   {
-    label: 'SalesforceObject',
-    description: getMessage('command.metadata.enrich.type.salesforceobject')
+    label: 'CustomObject',
+    description: getMessage('command.metadata.enrich.type.customobject')
   }
 ];
