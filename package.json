@@ -1,0 +1,76 @@
+{
+  "name": "salesforce-metadata-enrichment",
+  "displayName": "Salesforce Metadata Enrichment",
+  "description": "Enrich Salesforce metadata components in your local DX project directly from VS Code.",
+  "version": "0.0.1",
+  "publisher": "salesforce",
+  "license": "Apache-2.0",
+  "repository": {
+    "url": "https://github.com/forcedotcom/vscode-metadata-enrichment"
+  },
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "dist/extension.js",
+  "activationEvents": [
+    "workspaceContains:sfdx-project.json"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sf.metadata.enrich",
+        "title": "%command.metadata.enrich.title%"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "sf.metadata.enrich"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@salesforce/core": "^8.24.3",
+    "@salesforce/metadata-enrichment": "^0.0.11",
+    "@salesforce/source-deploy-retrieve": "^12.31.14",
+    "concat-map": "^0.0.2",
+    "minimatch": "^9.0.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "jest": "^30.3.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.5.0"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "compile": "npm run build",
+    "compile:clean": "tsc --build --clean",
+    "bundle:extension": "node esbuild.config.cjs",
+    "vscode:prepublish": "npm run bundle:extension",
+    "vscode:package": "npm run bundle:extension && npx vsce package",
+    "vscode:local-install": "npm run vscode:package && code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
+    "vscode:local-uninstall": "code --uninstall-extension salesforce.salesforce-metadata-enrichment",
+    "vscode:local-reinstall": "npm run vscode:package && code --uninstall-extension salesforce.salesforce-metadata-enrichment ; code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
+    "lint": "eslint . --ext .ts",
+    "prettier": "prettier --write .",
+    "prettier-check": "prettier --check .",
+    "clean": "tsc --build --clean && rm -rf lib dist node_modules *.vsix",
+    "test": "jest"
+  }
+}
