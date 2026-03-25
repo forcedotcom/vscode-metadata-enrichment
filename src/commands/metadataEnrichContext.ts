@@ -18,7 +18,8 @@ import * as vscode from 'vscode';
 import { METADATA_ENRICH_CONTEXT_COMMAND } from '../constants/constants';
 import { resolveProject } from '../flows/resolveProject';
 import { pickOrgAndConnect } from '../flows/connectToOrg';
-import { buildEligibleComponentsFromPath, isInsidePackageDirectory } from '../flows/buildEligibleComponents';
+import { buildEligibleComponentsFromPath } from '../flows/buildEligibleComponents';
+import { isEligibleEnrichmentPath } from '../utils/pathValidator';
 import { executeEnrichment } from '../flows/executeEnrichment';
 import { getOutputChannel } from '../utils/outputChannel';
 import { getMessage } from '../utils/localization';
@@ -53,7 +54,7 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
      *               File -> enriches the corresponding component the file belongs to
      *               Folder -> enriches all components within the folder if it is a component type folder (e.g. lwc/, objects/, etc.)
      */
-    if (!isInsidePackageDirectory(uri.fsPath, project)) {
+    if (!isEligibleEnrichmentPath(uri.fsPath, project)) {
       vscode.window.showErrorMessage(getMessage('command.metadata.enrich.context.error.invalidPath'));
       return;
     }

@@ -20,7 +20,6 @@ import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
-export { isInsidePackageDirectory } from '../utils/pathValidator';
 
 export type EligibleComponents = {
   enrichmentRecords: EnrichmentRecords;

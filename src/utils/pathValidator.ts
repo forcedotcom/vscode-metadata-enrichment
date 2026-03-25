@@ -19,11 +19,14 @@ import { SfProject } from '@salesforce/core';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 
 /**
- * Returns true if fsPath is at or below a recognized metadata type directory
- * (e.g. lwc/, classes/, objects/) within the package, by walking up the path
- * from fsPath to the package root and checking each segment against the SDR registry.
+ * Returns true if the provided path is at or below a metadata type directory.
+ * (e.g. lwc/, classes/, objects/) 
+ * 
+ * From the provided path, walks up level-by-level checking if the current level 
+ * is a metadata type directory, comparing to the SDR registry.
+ * If it reaches the package root before finding a matching metadata type directory, then returns false.
  */
-export function isAtOrBelowTypeDirectory(fsPath: string, packageRootPath: string): boolean {
+export function isWithinMetadataTypeDirectory(fsPath: string, packageRootPath: string): boolean {
   const registry = new RegistryAccess();
   const typeDirectoryNames = new Set(Object.values(registry.getRegistry().types).map(t => t.directoryName));
   let current = fsPath;
@@ -37,12 +40,12 @@ export function isAtOrBelowTypeDirectory(fsPath: string, packageRootPath: string
 }
 
 /**
- * Returns true if fsPath is at a metadata type folder or deeper within a package directory
- * (e.g. force-app/main/default/lwc/ or any file/folder inside it), and false for paths at
- * or above the package directory level or in intermediate non-type directories like
- * force-app/main/default/.
+ * Returns true if the given path is eligible for enrichment.
+ * An enrichment-eligible path must have the following:
+ *   1. Is within a package directory (e.g. force-app/main/default/)
+ *   2. Is within a metadata type directory (e.g. lwc/, classes/, objects/)
  */
-export function isInsidePackageDirectory(fsPath: string, project: SfProject): boolean {
+export function isEligibleEnrichmentPath(fsPath: string, project: SfProject): boolean {
   const packageDir = project.getPackageFromPath(fsPath);
   if (!packageDir) {
     return false;
@@ -52,5 +55,5 @@ export function isInsidePackageDirectory(fsPath: string, project: SfProject): bo
   if (normalizedFsPath === normalizedPackageRoot) {
     return false;
   }
-  return isAtOrBelowTypeDirectory(normalizedFsPath, normalizedPackageRoot);
+  return isWithinMetadataTypeDirectory(normalizedFsPath, normalizedPackageRoot);
 }
