@@ -43,7 +43,7 @@
       "explorer/context": [
         {
           "command": "sf.metadata.enrich.context",
-          "group": "salesforce@1"
+          "group": "enrichment@1"
         }
       ]
     }
