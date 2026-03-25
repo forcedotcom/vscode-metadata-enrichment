@@ -25,6 +25,6 @@ export function getMessage(key: string, ...args: string[]): string {
     const message = (nls as Record<string, string>)[key] ?? key;
     return vscode.l10n.t(message, ...args);
   } catch {
-    return '';
+    return key;
   }
 }

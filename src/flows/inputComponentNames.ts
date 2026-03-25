@@ -39,7 +39,7 @@ export async function inputComponentNames(typeLabel: string): Promise<string[] |
   return [...new Set(
     input
       .split(',')
-      .map(name => name.trim().replace(/"/g, ''))
+      .map(name => name.trim().replace(/^"|"$/g, ''))
       .filter(name => name.length > 0)
       .map(name => `${typeLabel}:${name}`)
   )];

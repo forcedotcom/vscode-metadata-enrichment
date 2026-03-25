@@ -15,8 +15,8 @@
  */
 
 import * as vscode from 'vscode';
-import { registerMetadataEnrichCommand } from './commands/metadataEnrich';
-import { registerMetadataEnrichContextCommand } from './commands/metadataEnrichContext';
+import { registerMetadataEnrichCommand } from './commands/enrichFromCommand';
+import { registerMetadataEnrichContextCommand } from './commands/enrichFromContextMenu';
 import { disposeOutputChannel } from './utils/outputChannel';
 
 export function activate(context: vscode.ExtensionContext): void {

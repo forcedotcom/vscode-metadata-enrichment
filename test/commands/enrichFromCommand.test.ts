@@ -17,7 +17,7 @@
 import type * as vscodeTypes from 'vscode';
 const vscode = require('vscode') as typeof import('vscode');
 import { METADATA_ENRICH_COMMAND } from '../../src/constants/constants';
-import { registerMetadataEnrichCommand } from '../../src/commands/metadataEnrich';
+import { registerMetadataEnrichCommand } from '../../src/commands/enrichFromCommand';
 
 jest.mock('../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
 jest.mock('../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));

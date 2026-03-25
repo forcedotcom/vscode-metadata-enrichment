@@ -17,7 +17,7 @@
 import type * as vscodeTypes from 'vscode';
 const vscode = require('vscode') as typeof import('vscode');
 import { METADATA_ENRICH_CONTEXT_COMMAND } from '../../src/constants/constants';
-import { registerMetadataEnrichContextCommand } from '../../src/commands/metadataEnrichContext';
+import { registerMetadataEnrichContextCommand } from '../../src/commands/enrichFromContextMenu';
 
 jest.mock('../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
 jest.mock('../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));

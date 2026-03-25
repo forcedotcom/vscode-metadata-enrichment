@@ -16,8 +16,7 @@
 
 import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
-import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
-import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
+import { ComponentSetBuilder, type SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
 
@@ -70,18 +69,7 @@ export async function buildEligibleComponents(
   );
   enrichmentRecords.addRecords(componentsToSkip);
 
-  const componentsEligibleToProcess = projectSourceComponents.filter(component => {
-    const name = component.fullName ?? component.name;
-    if (!name) {
-      return false;
-    }
-    for (const skip of componentsToSkip) {
-      if (skip.componentName === name) {
-        return false;
-      }
-    }
-    return true;
-  });
+  const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
 
   if (componentsEligibleToProcess.length === 0) {
     vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
@@ -132,18 +120,7 @@ export async function buildEligibleComponentsFromPath(
   );
   enrichmentRecords.addRecords(componentsToSkip);
 
-  const componentsEligibleToProcess = projectSourceComponents.filter(component => {
-    const name = component.fullName ?? component.name;
-    if (!name) {
-      return false;
-    }
-    for (const skip of componentsToSkip) {
-      if (skip.componentName === name) {
-        return false;
-      }
-    }
-    return true;
-  });
+  const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
 
   if (componentsEligibleToProcess.length === 0) {
     vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
@@ -155,3 +132,13 @@ export async function buildEligibleComponentsFromPath(
   return { enrichmentRecords, componentsEligibleToProcess };
 }
 
+function filterEligibleComponents(
+  components: SourceComponent[],
+  componentsToSkip: ReturnType<typeof SourceComponentProcessor.getComponentsToSkip>
+): SourceComponent[] {
+  const skipNames = new Set(Array.from(componentsToSkip, s => s.componentName));
+  return components.filter(c => {
+    const name = c.fullName ?? c.name;
+    return name && !skipNames.has(name);
+  });
+}
