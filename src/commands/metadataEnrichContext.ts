@@ -49,10 +49,7 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
     }
 
     /**
-     * Step #2 - Validate the selected path is in a valid enrichment context.
-     *           Only files or folders inside an eligible metadata type folder can be enriched, for example:
-     *               File -> enriches the corresponding component the file belongs to
-     *               Folder -> enriches all components within the folder if it is a component type folder (e.g. lwc/, objects/, etc.)
+     * Step #2 - Validate the selected path is in a valid enrichment context
      */
     if (!isEligibleEnrichmentPath(uri.fsPath, project)) {
       vscode.window.showErrorMessage(getMessage('command.metadata.enrich.context.error.invalidPath'));
@@ -71,8 +68,8 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
     const outputChannel = getOutputChannel();
 
     /**
-     * Steps #4–5 - Resolve eligible components from the selected path and execute enrichment.
-     *              Keep user updated with progress with final results printed to console. 
+     * Steps #4 - Resolve eligible components from the selected path and execute enrichment.
+     *            Keep user updated with progress with final results printed to console. 
      */
     try {
       await vscode.window.withProgress(

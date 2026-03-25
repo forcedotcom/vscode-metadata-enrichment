@@ -18,42 +18,39 @@ import * as path from 'path';
 import { SfProject } from '@salesforce/core';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 
-/**
- * Returns true if the provided path is at or below a metadata type directory.
- * (e.g. lwc/, classes/, objects/) 
- * 
- * From the provided path, walks up level-by-level checking if the current level 
- * is a metadata type directory, comparing to the SDR registry.
- * If it reaches the package root before finding a matching metadata type directory, then returns false.
- */
-export function isWithinMetadataTypeDirectory(fsPath: string, packageRootPath: string): boolean {
-  const registry = new RegistryAccess();
-  const typeDirectoryNames = new Set(Object.values(registry.getRegistry().types).map(t => t.directoryName));
-  let current = fsPath;
-  while (current !== packageRootPath && current.length > packageRootPath.length) {
-    if (typeDirectoryNames.has(path.basename(current))) {
-      return true;
-    }
-    current = path.dirname(current);
-  }
-  return false;
-}
+const typeDirectoryNames = new Set(
+  Object.values(new RegistryAccess().getRegistry().types).map(t => t.directoryName)
+);
 
 /**
  * Returns true if the given path is eligible for enrichment.
  * An enrichment-eligible path must have the following:
- *   1. Is within a package directory (e.g. force-app/main/default/)
- *   2. Is within a metadata type directory (e.g. lwc/, classes/, objects/)
+ *   1. Is within, but not at the root of, a package directory (e.g. force-app/main/default/)
+ *   2. Is at or within a metadata type directory (e.g. lwc/, classes/, objects/)
  */
 export function isEligibleEnrichmentPath(fsPath: string, project: SfProject): boolean {
   const packageDir = project.getPackageFromPath(fsPath);
   if (!packageDir) {
     return false;
   }
-  const normalizedFsPath = path.resolve(fsPath);
-  const normalizedPackageRoot = path.resolve(packageDir.fullPath);
-  if (normalizedFsPath === normalizedPackageRoot) {
-    return false;
+  return isWithinMetadataTypeDirectory(path.resolve(fsPath), path.resolve(packageDir.fullPath));
+}
+
+/**
+ * Returns true if the provided path is at or within a metadata type directory.
+ * (e.g. lwc/, classes/, objects/)
+ *
+ * From the provided path, walks up level-by-level checking if the current level
+ * is a metadata type directory, comparing to the SDR registry.
+ * If it reaches the package root before finding a matching metadata type directory, then returns false.
+ */
+function isWithinMetadataTypeDirectory(fsPath: string, packageRootPath: string): boolean {
+  let current = fsPath;
+  while (current !== packageRootPath) {
+    if (typeDirectoryNames.has(path.basename(current))) {
+      return true;
+    }
+    current = path.dirname(current);
   }
-  return isWithinMetadataTypeDirectory(normalizedFsPath, normalizedPackageRoot);
+  return false;
 }

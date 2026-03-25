@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isWithinMetadataTypeDirectory, isEligibleEnrichmentPath } from '../../src/utils/pathValidator';
+import { isEligibleEnrichmentPath } from '../../src/utils/pathValidator';
 
 jest.mock('@salesforce/source-deploy-retrieve', () => ({
   RegistryAccess: jest.fn().mockImplementation(() => ({
@@ -28,18 +28,6 @@ jest.mock('@salesforce/source-deploy-retrieve', () => ({
 }));
 
 const PACKAGE_ROOT = '/workspace/force-app';
-
-describe('isWithinMetadataTypeDirectory', () => {
-  it('returns true when fsPath is a recognized type directory', () => {
-    const result = isWithinMetadataTypeDirectory(`${PACKAGE_ROOT}/main/default/lwc`, PACKAGE_ROOT);
-    expect(result).toBe(true);
-  });
-
-  it('returns false when fsPath is an intermediate non-type directory above any type folder', () => {
-    const result = isWithinMetadataTypeDirectory(`${PACKAGE_ROOT}/main/default`, PACKAGE_ROOT);
-    expect(result).toBe(false);
-  });
-});
 
 describe('isEligibleEnrichmentPath', () => {
   it('returns true when fsPath is inside a package directory at the type folder level', () => {

@@ -41,8 +41,8 @@
   "command.metadata.enrich.type.customobject": "Custom Object",
   "command.metadata.enrich.context.title": "SFDX: Enrich Metadata",
   "command.metadata.enrich.context.error.noSelection": "No file or folder selected. Right-click a component file, component folder, or metadata type folder to enrich.",
-  "command.metadata.enrich.context.error.invalidPath": "Select a metadata component file, component folder, or metadata type folder to enrich. Enrichment is not supported at the project or package directory level.",
-  "command.metadata.enrich.context.warn.noComponents": "No metadata components found at the selected path. Try selecting a more specific file or folder.",
+  "command.metadata.enrich.context.error.invalidPath": "Select a component file, component folder, or metadata type folder to enrich. Enrichment is not supported above the package directory level.",
+  "command.metadata.enrich.context.warn.noComponents": "No components found at the selected path. Try selecting a more specific file or folder.",
   "command.metadata.enrich.context.log.noComponents": "[Metadata Enrichment] No components found at the selected path.",
   "command.metadata.enrich.context.log.starting": "[Metadata Enrichment] Starting enrichment from path: {0}"
 }
