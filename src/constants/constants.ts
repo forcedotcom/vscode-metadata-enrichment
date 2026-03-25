@@ -18,6 +18,7 @@ import type { QuickPickItem } from 'vscode';
 import { getMessage } from '../utils/localization';
 
 export const METADATA_ENRICH_COMMAND = 'sf.metadata.enrich';
+export const METADATA_ENRICH_CONTEXT_COMMAND = 'sf.metadata.enrich.context';
 
 export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
   {
@@ -29,7 +30,7 @@ export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
     description: getMessage('command.metadata.enrich.type.lwc')
   },
   {
-    label: 'LightningType',
+    label: 'LightningTypeBundle',
     description: getMessage('command.metadata.enrich.type.lightningtype')
   },
   {

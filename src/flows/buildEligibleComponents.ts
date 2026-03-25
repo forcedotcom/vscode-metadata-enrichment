@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
 import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
@@ -61,6 +62,84 @@ export async function buildEligibleComponents(
     getMessage('command.metadata.enrich.log.foundComponents', String(projectSourceComponents.length))
   );
 
+  const enrichmentRecords = new EnrichmentRecords(projectSourceComponents);
+
+  const componentsToSkip = SourceComponentProcessor.getComponentsToSkip(
+    projectSourceComponents,
+    metadataEntries,
+    project.getPath()
+  );
+  enrichmentRecords.addRecords(componentsToSkip);
+
+  const componentsEligibleToProcess = projectSourceComponents.filter(component => {
+    const name = component.fullName ?? component.name;
+    if (!name) {
+      return false;
+    }
+    for (const skip of componentsToSkip) {
+      if (skip.componentName === name) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  if (componentsEligibleToProcess.length === 0) {
+    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
+    outputChannel.show();
+    return undefined;
+  }
+
+  return { enrichmentRecords, componentsEligibleToProcess };
+}
+
+/**
+ * Returns true if fsPath is strictly inside one of the project's package
+ * directories (not at the package directory root itself or above it).
+ * Uses SfProject.getPackageFromPath() which handles path resolution and
+ * matching against all declared packageDirectories in sfdx-project.json.
+ */
+export function isInsidePackageDirectory(fsPath: string, project: SfProject): boolean {
+  const packageDir = project.getPackageFromPath(fsPath);
+  if (!packageDir) {
+    return false;
+  }
+  const normalizedFsPath = path.resolve(fsPath);
+  const normalizedPackageRoot = path.resolve(packageDir.fullPath);
+  return normalizedFsPath !== normalizedPackageRoot;
+}
+
+/**
+ * FLOW - Build Eligible Components From Path
+ *
+ * Given a file system path (from a context menu selection), resolves the matching
+ * source components using a sourcepath-based lookup and checks eligibility for enrichment.
+ * Displays both pop-up and output channel messages if no components are found or all are skipped.
+ */
+export async function buildEligibleComponentsFromPath(
+  fsPath: string,
+  project: SfProject,
+  outputChannel: vscode.OutputChannel
+): Promise<EligibleComponents | undefined> {
+  const projectComponentSet = await ComponentSetBuilder.build({
+    sourcepath: [fsPath]
+  });
+
+  const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
+
+  if (projectSourceComponents.length === 0) {
+    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.context.warn.noComponents'));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.context.log.noComponents'));
+    outputChannel.show();
+    return undefined;
+  }
+
+  outputChannel.appendLine(
+    getMessage('command.metadata.enrich.log.foundComponents', String(projectSourceComponents.length))
+  );
+
+  const metadataEntries = projectSourceComponents.map(c => `${c.type.name}:${c.fullName ?? c.name}`);
   const enrichmentRecords = new EnrichmentRecords(projectSourceComponents);
 
   const componentsToSkip = SourceComponentProcessor.getComponentsToSkip(

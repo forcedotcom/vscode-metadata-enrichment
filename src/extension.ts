@@ -16,10 +16,12 @@
 
 import * as vscode from 'vscode';
 import { registerMetadataEnrichCommand } from './commands/metadataEnrich';
+import { registerMetadataEnrichContextCommand } from './commands/metadataEnrichContext';
 import { disposeOutputChannel } from './utils/outputChannel';
 
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(registerMetadataEnrichCommand());
+  context.subscriptions.push(registerMetadataEnrichContextCommand());
 }
 
 export function deactivate(): void {

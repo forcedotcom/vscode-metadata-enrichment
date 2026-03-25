@@ -21,11 +21,16 @@ jest.mock('../src/commands/metadataEnrich', () => ({
   registerMetadataEnrichCommand: jest.fn().mockReturnValue({ dispose: jest.fn() })
 }));
 
+jest.mock('../src/commands/metadataEnrichContext', () => ({
+  registerMetadataEnrichContextCommand: jest.fn().mockReturnValue({ dispose: jest.fn() })
+}));
+
 jest.mock('../src/utils/outputChannel', () => ({
   disposeOutputChannel: jest.fn()
 }));
 
 import { registerMetadataEnrichCommand } from '../src/commands/metadataEnrich';
+import { registerMetadataEnrichContextCommand } from '../src/commands/metadataEnrichContext';
 
 describe('extension', () => {
   describe('activate', () => {
@@ -35,7 +40,8 @@ describe('extension', () => {
       activate(mockContext);
 
       expect(registerMetadataEnrichCommand).toHaveBeenCalled();
-      expect(mockContext.subscriptions.push).toHaveBeenCalledTimes(1);
+      expect(registerMetadataEnrichContextCommand).toHaveBeenCalled();
+      expect(mockContext.subscriptions.push).toHaveBeenCalledTimes(2);
     });
   });
 
