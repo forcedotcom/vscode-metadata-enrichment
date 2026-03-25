@@ -25,6 +25,13 @@ import { executeEnrichment } from '../flows/executeEnrichment';
 import { METADATA_ENRICH_COMMAND } from '../constants/constants';
 import { getMessage } from '../utils/localization';
 
+/**
+ * COMMAND - Metadata Enrichment Command
+ * 
+ * Enrich metadata in VS Code via a guided workflow triggered from the Command Palette.
+ * User inputs the metadata type, the target component name(s), and the target org.
+ * Metadata enrichment executes and writes results to corresponding local project metadata file(s).
+ */
 export const registerMetadataEnrichCommand = (): vscode.Disposable => {
   return vscode.commands.registerCommand(METADATA_ENRICH_COMMAND, async () => {
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
 import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
+export { isInsidePackageDirectory } from '../utils/pathValidator';
 
 export type EligibleComponents = {
   enrichmentRecords: EnrichmentRecords;
@@ -95,22 +95,6 @@ export async function buildEligibleComponents(
 }
 
 /**
- * Returns true if fsPath is strictly inside one of the project's package
- * directories (not at the package directory root itself or above it).
- * Uses SfProject.getPackageFromPath() which handles path resolution and
- * matching against all declared packageDirectories in sfdx-project.json.
- */
-export function isInsidePackageDirectory(fsPath: string, project: SfProject): boolean {
-  const packageDir = project.getPackageFromPath(fsPath);
-  if (!packageDir) {
-    return false;
-  }
-  const normalizedFsPath = path.resolve(fsPath);
-  const normalizedPackageRoot = path.resolve(packageDir.fullPath);
-  return normalizedFsPath !== normalizedPackageRoot;
-}
-
-/**
  * FLOW - Build Eligible Components From Path
  *
  * Given a file system path (from a context menu selection), resolves the matching
@@ -171,3 +155,4 @@ export async function buildEligibleComponentsFromPath(
 
   return { enrichmentRecords, componentsEligibleToProcess };
 }
+

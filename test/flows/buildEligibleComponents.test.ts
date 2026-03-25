@@ -16,10 +16,11 @@
 
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
-import { buildEligibleComponents } from '../../src/flows/buildEligibleComponents';
+import { buildEligibleComponents, buildEligibleComponentsFromPath } from '../../src/flows/buildEligibleComponents';
 
 jest.mock('@salesforce/source-deploy-retrieve', () => ({
-  ComponentSetBuilder: { build: jest.fn() }
+  ComponentSetBuilder: { build: jest.fn() },
+  RegistryAccess: jest.fn()
 }));
 
 jest.mock('@salesforce/metadata-enrichment', () => ({
@@ -66,6 +67,61 @@ describe('buildEligibleComponents', () => {
     ]);
 
     const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
+
+  it('excludes components with no name from eligible components', async () => {
+    const namelessComponent = { fullName: undefined, name: undefined, type: { name: 'LightningComponentBundle' } };
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [namelessComponent] })
+    });
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([]);
+
+    const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
+});
+
+describe('buildEligibleComponentsFromPath', () => {
+  beforeEach(() => {
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([]);
+  });
+
+  it('returns enrichmentRecords and eligible components when components are found at the path', async () => {
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [mockComponent] })
+    });
+
+    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
+
+    expect(result).not.toBeUndefined();
+    expect(result!.componentsEligibleToProcess).toEqual([mockComponent]);
+    expect(EnrichmentRecords).toHaveBeenCalledWith([mockComponent]);
+    expect(SourceComponentProcessor.getComponentsToSkip).toHaveBeenCalled();
+  });
+
+  it('returns undefined and shows a warning when no components are found at the path', async () => {
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [] })
+    });
+
+    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
+
+  it('returns undefined and shows a warning when all components at the path are skipped', async () => {
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [mockComponent] })
+    });
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([{ componentName: 'myComp' }]);
+
+    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
 
     expect(result).toBeUndefined();
     expect(mockOutputChannel.show).toHaveBeenCalled();

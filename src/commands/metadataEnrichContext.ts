@@ -23,6 +23,15 @@ import { executeEnrichment } from '../flows/executeEnrichment';
 import { getOutputChannel } from '../utils/outputChannel';
 import { getMessage } from '../utils/localization';
 
+/**
+ * COMMAND - Metadata Enrichment Context Menu Action
+ * 
+ * Enrich metadata in VS Code from the context menu of a file or folder in the local project.
+ * Components within the context of the trigger point will be enriched, for example if triggered from:
+ *     File -> enriches the corresponding component the file belongs to
+ *     Folder -> enriches all components within the folder if it is a component type folder (e.g. lwc/, objects/, etc.)
+ * Metadata enrichment executes and writes results to corresponding local project metadata file(s).
+ */
 export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
   return vscode.commands.registerCommand(METADATA_ENRICH_CONTEXT_COMMAND, async (uri?: vscode.Uri) => {
     if (!uri) {
@@ -39,8 +48,10 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
     }
 
     /**
-     * Step #2 - Validate the selected path is inside a package directory but not at the
-     *           package directory root or above (prevents enriching the entire project)
+     * Step #2 - Validate the selected path is in a valid enrichment context.
+     *           Only files or folders inside an eligible metadata type folder can be enriched, for example:
+     *               File -> enriches the corresponding component the file belongs to
+     *               Folder -> enriches all components within the folder if it is a component type folder (e.g. lwc/, objects/, etc.)
      */
     if (!isInsidePackageDirectory(uri.fsPath, project)) {
       vscode.window.showErrorMessage(getMessage('command.metadata.enrich.context.error.invalidPath'));
@@ -60,7 +71,7 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
 
     /**
      * Steps #4–5 - Resolve eligible components from the selected path and execute enrichment.
-     *              Keep user updated with progress with final results printed to console.
+     *              Keep user updated with progress with final results printed to console. 
      */
     try {
       await vscode.window.withProgress(
