@@ -21,8 +21,6 @@ import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadat
 import { getMessage } from '../utils/localization';
 import type { EligibleComponents } from '../constants/types';
 
-export type { EligibleComponents };
-
 /**
  * FLOW - Build Eligible Components
  *

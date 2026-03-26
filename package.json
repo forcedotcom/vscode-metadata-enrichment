@@ -56,6 +56,8 @@
     "minimatch": "^9.0.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
@@ -70,12 +72,13 @@
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "prettier": "^3.8.1",
+    "pretty-quick": "^4.2.2",
     "ts-jest": "^29.4.6",
     "typescript": "^5.5.0"
   },
   "scripts": {
     "build": "tsc --build",
-    "compile": "npm run build",
+    "compile": "yarn build",
     "compile:clean": "tsc --build --clean",
     "bundle:extension": "node esbuild.config.cjs",
     "vscode:prepublish": "npm run bundle:extension",
@@ -86,6 +89,7 @@
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
     "prettier-check": "prettier --check .",
+    "commitlint": "commitlint",
     "clean": "tsc --build --clean && rm -rf lib dist node_modules *.vsix",
     "test": "jest",
     "prepare": "husky"

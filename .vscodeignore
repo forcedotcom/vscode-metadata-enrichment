@@ -9,6 +9,7 @@ lib/**
 # Development config files
 .github/**
 esbuild.config.cjs
+commitlint.config.cjs
 .nvmrc
 .husky/**
 .eslintrc.json
@@ -17,6 +18,9 @@ esbuild.config.cjs
 .prettierignore
 .editorconfig
 .vscode/**
+
+# Package manager
+yarn.lock
 
 # Test files
 jest.config.js
