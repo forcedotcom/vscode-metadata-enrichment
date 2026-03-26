@@ -40,7 +40,6 @@
   "command.metadata.enrich.type.lwc": "Lightning Web Component (LWC)",
   "command.metadata.enrich.type.lightningtype": "Lightning Type",
   "command.metadata.enrich.type.customobject": "Custom Object",
-  "command.metadata.enrich.context.title": "SFDX: Enrich Metadata",
   "command.metadata.enrich.context.error.noSelection": "No file or folder selected. Right-click a component file, component folder, or metadata type folder to enrich.",
   "command.metadata.enrich.context.error.invalidPath": "Select a component file, component folder, or metadata type folder to enrich. Enrichment is not supported above the package directory level.",
   "command.metadata.enrich.context.warn.noComponents": "No components found at the selected path. Try selecting a more specific file or folder.",

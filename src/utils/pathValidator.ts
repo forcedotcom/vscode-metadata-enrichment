@@ -45,10 +45,24 @@ export function isEligibleEnrichmentPath(fsPath: string, project: SfProject): bo
 function isWithinMetadataTypeDirectory(fsPath: string, packageRootPath: string): boolean {
   let current = fsPath;
   while (current !== packageRootPath) {
-    if (typeDirectoryNames.has(path.basename(current))) {
+    const currentSegment = path.basename(current);
+
+    // Return true if the current segment matches a known metadata type directory
+    // e.g. "/force-app/main/default/lwc" -> "lwc" which is in the SDR registry as a known type directory
+    if (typeDirectoryNames.has(currentSegment)) {
       return true;
     }
-    current = path.dirname(current);
+
+    const parent = path.dirname(current);
+
+    // Return false as we've reached as far as the package root path and didn't find a matching directory
+    if (parent === current) {
+      return false;
+    }
+
+    // Move up one level and keep checking
+    current = parent;
   }
+
   return false;
 }

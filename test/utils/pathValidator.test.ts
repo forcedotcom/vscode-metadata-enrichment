@@ -29,22 +29,53 @@ jest.mock('@salesforce/source-deploy-retrieve', () => ({
 
 const PACKAGE_ROOT = '/workspace/force-app';
 
+const mockProject = (packageRoot: string | undefined) =>
+  ({ getPackageFromPath: () => (packageRoot ? { fullPath: packageRoot } : undefined) }) as any;
+
 describe('isEligibleEnrichmentPath', () => {
   it('returns true when fsPath is inside a package directory at the type folder level', () => {
-    const mockProject = {
-      getPackageFromPath: () => ({ fullPath: PACKAGE_ROOT })
-    } as any;
-
-    const result = isEligibleEnrichmentPath(`${PACKAGE_ROOT}/main/default/classes`, mockProject);
+    const result = isEligibleEnrichmentPath(`${PACKAGE_ROOT}/main/default/classes`, mockProject(PACKAGE_ROOT));
     expect(result).toBe(true);
   });
 
   it('returns false when fsPath is not within any package directory', () => {
-    const mockProject = {
-      getPackageFromPath: () => undefined
-    } as any;
+    const result = isEligibleEnrichmentPath('/some/unrelated/path', mockProject(undefined));
+    expect(result).toBe(false);
+  });
 
-    const result = isEligibleEnrichmentPath('/some/unrelated/path', mockProject);
+  it('returns false when fsPath is above the package root', () => {
+    const result = isEligibleEnrichmentPath('/workspace', mockProject(PACKAGE_ROOT));
+    expect(result).toBe(false);
+  });
+
+  it('returns true when fsPath is at the type directory level', () => {
+    const result = isEligibleEnrichmentPath(`${PACKAGE_ROOT}/main/default/lwc`, mockProject(PACKAGE_ROOT));
+    expect(result).toBe(true);
+  });
+
+  it('returns true when fsPath is at the component folder level', () => {
+    const result = isEligibleEnrichmentPath(`${PACKAGE_ROOT}/main/default/lwc/myComp`, mockProject(PACKAGE_ROOT));
+    expect(result).toBe(true);
+  });
+
+  it('returns true when fsPath is at a specific component file level', () => {
+    const result = isEligibleEnrichmentPath(
+      `${PACKAGE_ROOT}/main/default/lwc/myComp/myComp.js`,
+      mockProject(PACKAGE_ROOT)
+    );
+    expect(result).toBe(true);
+  });
+
+  it('returns false when fsPath is within the package but not under a valid type folder', () => {
+    const result = isEligibleEnrichmentPath(`${PACKAGE_ROOT}/main/default/notAType`, mockProject(PACKAGE_ROOT));
+    expect(result).toBe(false);
+  });
+
+  it('returns false when fsPath is a file within the package but not under a valid type folder', () => {
+    const result = isEligibleEnrichmentPath(
+      `${PACKAGE_ROOT}/main/default/notAType/someFile.js`,
+      mockProject(PACKAGE_ROOT)
+    );
     expect(result).toBe(false);
   });
 });

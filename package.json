@@ -27,7 +27,7 @@
       },
       {
         "command": "sf.metadata.enrich.context",
-        "title": "%command.metadata.enrich.context.title%"
+        "title": "%command.metadata.enrich.title%"
       }
     ],
     "menus": {
