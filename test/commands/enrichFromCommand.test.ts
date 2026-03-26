@@ -37,9 +37,9 @@ import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
 import { resolveProject } from '../../src/flows/resolveProject';
 import { buildEligibleComponents } from '../../src/flows/buildEligibleComponents';
 import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { mockConnection } from '../__mocks__/mocks';
 
 describe('registerMetadataEnrichCommand', () => {
-  const mockConnection = {} as any;
   const mockComponent = { fullName: 'myComp', name: 'myComp' };
   const mockEligibleResult = {
     enrichmentRecords: {} as any,

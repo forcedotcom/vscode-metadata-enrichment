@@ -17,16 +17,13 @@
 import * as vscode from 'vscode';
 import { EnrichmentHandler, EnrichmentMetrics, FileProcessor } from '@salesforce/metadata-enrichment';
 import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { mockOutputChannel, mockProgress, mockConnection } from '../__mocks__/mocks';
 
 jest.mock('@salesforce/metadata-enrichment', () => ({
   EnrichmentHandler: { enrich: jest.fn() },
   EnrichmentMetrics: { createEnrichmentMetrics: jest.fn() },
   FileProcessor: { updateMetadata: jest.fn() }
 }));
-
-const mockOutputChannel = { appendLine: jest.fn(), show: jest.fn() };
-const mockProgress = { report: jest.fn() };
-const mockConnection = {} as any;
 const mockComponents = [{ fullName: 'myComp', name: 'myComp' }] as any[];
 
 const mockEnrichmentResults = [{ componentName: 'myComp', status: 'success' }];

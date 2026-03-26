@@ -17,6 +17,7 @@
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { buildEligibleComponents, buildEligibleComponentsFromPath } from '../../src/flows/buildEligibleComponents';
+import { mockOutputChannel, mockProject } from '../__mocks__/mocks';
 
 jest.mock('@salesforce/source-deploy-retrieve', () => ({
   ComponentSetBuilder: { build: jest.fn() },
@@ -25,11 +26,8 @@ jest.mock('@salesforce/source-deploy-retrieve', () => ({
 
 jest.mock('@salesforce/metadata-enrichment', () => ({
   EnrichmentRecords: jest.fn().mockImplementation(() => ({ addRecords: jest.fn(), recordSet: new Map() })),
-  SourceComponentProcessor: { getComponentsToSkip: jest.fn().mockReturnValue([]) }
+  SourceComponentProcessor: { getComponentsToSkip: jest.fn().mockReturnValue(new Set()) }
 }));
-
-const mockOutputChannel = { appendLine: jest.fn(), show: jest.fn() };
-const mockProject = { getPath: () => '/workspace' } as any;
 const metadataEntries = ['LightningComponentBundle:myComp'];
 const mockComponent = { fullName: 'myComp', name: 'myComp', type: { name: 'LightningComponentBundle' } };
 
@@ -62,7 +60,7 @@ describe('buildEligibleComponents', () => {
     (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
       getSourceComponents: () => ({ toArray: () => [mockComponent] })
     });
-    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([{ componentName: 'myComp' }]);
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue(new Set([{ componentName: 'myComp' }]));
 
     const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
 
@@ -75,7 +73,7 @@ describe('buildEligibleComponents', () => {
     (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
       getSourceComponents: () => ({ toArray: () => [namelessComponent] })
     });
-    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([]);
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue(new Set());
 
     const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
 
@@ -86,7 +84,7 @@ describe('buildEligibleComponents', () => {
 
 describe('buildEligibleComponentsFromPath', () => {
   beforeEach(() => {
-    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([]);
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue(new Set());
   });
 
   it('returns enrichmentRecords and eligible components when components are found at the path', async () => {
@@ -125,7 +123,7 @@ describe('buildEligibleComponentsFromPath', () => {
     (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
       getSourceComponents: () => ({ toArray: () => [mockComponent] })
     });
-    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([{ componentName: 'myComp' }]);
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue(new Set([{ componentName: 'myComp' }]));
 
     const result = await buildEligibleComponentsFromPath(
       '/workspace/force-app/main/default/lwc',

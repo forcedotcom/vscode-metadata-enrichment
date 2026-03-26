@@ -50,6 +50,17 @@ describe('pickOrgAndConnect', () => {
     expect(Org.create).not.toHaveBeenCalled();
   });
 
+  it('shows an error and returns undefined when Org.create throws', async () => {
+    (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([{ username: 'user@test.com', aliases: [] }]);
+    (vscode.window.showQuickPick as jest.Mock).mockResolvedValue({ label: 'user@test.com' });
+    (Org.create as jest.Mock).mockRejectedValue(new Error('Auth file corrupted'));
+
+    const result = await pickOrgAndConnect();
+
+    expect(result).toBeUndefined();
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('Auth file corrupted'));
+  });
+
   it('returns undefined when the user cancels the org QuickPick', async () => {
     (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([{ username: 'user@test.com', aliases: [] }]);
     (vscode.window.showQuickPick as jest.Mock).mockResolvedValue(undefined);

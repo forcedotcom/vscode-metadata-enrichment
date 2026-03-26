@@ -19,11 +19,9 @@ import { SfProject } from '@salesforce/core';
 import { ComponentSetBuilder, type SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
+import type { EligibleComponents } from '../constants/types';
 
-export type EligibleComponents = {
-  enrichmentRecords: EnrichmentRecords;
-  componentsEligibleToProcess: SourceComponent[];
-};
+export type { EligibleComponents };
 
 /**
  * FLOW - Build Eligible Components

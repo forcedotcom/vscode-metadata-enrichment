@@ -35,10 +35,10 @@ import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
 import { buildEligibleComponentsFromPath } from '../../src/flows/buildEligibleComponents';
 import { isEligibleEnrichmentPath } from '../../src/utils/pathValidator';
 import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { mockConnection } from '../__mocks__/mocks';
 
 describe('registerMetadataEnrichContextCommand', () => {
   const mockUri = { fsPath: '/workspace/force-app/main/default/lwc/myComp' } as vscodeTypes.Uri;
-  const mockConnection = {} as any;
   const mockProject = {} as any;
   const mockEligibleResult = {
     enrichmentRecords: {} as any,
