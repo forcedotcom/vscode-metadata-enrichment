@@ -16,6 +16,9 @@
     "Other"
   ],
   "main": "dist/extension.js",
+  "extensionDependencies": [
+    "salesforce.salesforcedx-vscode-core"
+  ],
   "activationEvents": [
     "workspaceContains:sfdx-project.json"
   ],
@@ -43,7 +46,7 @@
       "explorer/context": [
         {
           "command": "sf.metadata.enrich.context",
-          "group": "enrichment@1"
+          "when": "sf:project_opened && isFileSystemResource"
         }
       ]
     }
