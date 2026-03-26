@@ -20,7 +20,7 @@ import { getMessage } from '../utils/localization';
 
 /**
  * FLOW - Resolve Project
- * 
+ *
  * Resolves the Salesforce DX project folder and returns the project instance.
  * Displays pop-up error to user if no workspace folder is open.
  */

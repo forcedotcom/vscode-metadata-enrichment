@@ -26,7 +26,7 @@ import { getMessage } from '../utils/localization';
 
 /**
  * COMMAND - Metadata Enrichment Context Menu Action
- * 
+ *
  * Enrich metadata in VS Code from the context menu of a file or folder in the local project.
  * Components within the context of the trigger point will be enriched, for example if triggered from:
  *     File -> enriches the corresponding component the file belongs to
@@ -69,7 +69,7 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
 
     /**
      * Steps #4 - Resolve eligible components from the selected path and execute enrichment.
-     *            Keep user updated with progress with final results printed to console. 
+     *            Keep user updated with progress with final results printed to console.
      */
     try {
       await vscode.window.withProgress(
@@ -94,7 +94,13 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
             getMessage('command.metadata.enrich.log.eligibleComponents', String(componentsEligibleToProcess.length))
           );
 
-          await executeEnrichment(componentsEligibleToProcess, enrichmentRecords, orgResult.connection, outputChannel, progress);
+          await executeEnrichment(
+            componentsEligibleToProcess,
+            enrichmentRecords,
+            orgResult.connection,
+            outputChannel,
+            progress
+          );
         }
       );
     } catch (err) {

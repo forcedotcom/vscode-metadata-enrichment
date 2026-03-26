@@ -25,8 +25,8 @@ export type OrgConnection = {
 
 /**
  * FLOW - Connect to Org
- * 
- * Lists all the locally authenticated orgs in the user's DX project. 
+ *
+ * Lists all the locally authenticated orgs in the user's DX project.
  * Prompts the user to select one and returns the corresponding org connection
  * Displays pop-up message to user if no orgs are found.
  */

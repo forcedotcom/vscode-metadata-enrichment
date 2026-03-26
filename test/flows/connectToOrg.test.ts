@@ -51,9 +51,7 @@ describe('pickOrgAndConnect', () => {
   });
 
   it('returns undefined when the user cancels the org QuickPick', async () => {
-    (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([
-      { username: 'user@test.com', aliases: [] }
-    ]);
+    (AuthInfo.listAllAuthorizations as jest.Mock).mockResolvedValue([{ username: 'user@test.com', aliases: [] }]);
     (vscode.window.showQuickPick as jest.Mock).mockResolvedValue(undefined);
 
     const result = await pickOrgAndConnect();

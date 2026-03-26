@@ -20,7 +20,7 @@ import { getMessage } from '../utils/localization';
 
 /**
  * FLOW - Input Metadata Type
- * 
+ *
  * Prompts the user to select a target metadata type to enrich.
  * Only one metadata type can be selected. Multiple metadata types in one operation are not supported.
  */

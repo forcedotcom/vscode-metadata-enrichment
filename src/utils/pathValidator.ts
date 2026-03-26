@@ -18,9 +18,7 @@ import * as path from 'path';
 import { SfProject } from '@salesforce/core';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 
-const typeDirectoryNames = new Set(
-  Object.values(new RegistryAccess().getRegistry().types).map(t => t.directoryName)
-);
+const typeDirectoryNames = new Set(Object.values(new RegistryAccess().getRegistry().types).map(t => t.directoryName));
 
 /**
  * Returns true if the given path is eligible for enrichment.

@@ -36,11 +36,13 @@ export async function inputComponentNames(typeLabel: string): Promise<string[] |
   }
 
   // Trim whitespace, strip quotes, and deduplicate component names
-  return [...new Set(
-    input
-      .split(',')
-      .map(name => name.trim().replace(/^"|"$/g, ''))
-      .filter(name => name.length > 0)
-      .map(name => `${typeLabel}:${name}`)
-  )];
+  return [
+    ...new Set(
+      input
+        .split(',')
+        .map(name => name.trim().replace(/^"|"$/g, ''))
+        .filter(name => name.length > 0)
+        .map(name => `${typeLabel}:${name}`)
+    )
+  ];
 }

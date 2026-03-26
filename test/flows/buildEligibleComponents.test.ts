@@ -62,9 +62,7 @@ describe('buildEligibleComponents', () => {
     (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
       getSourceComponents: () => ({ toArray: () => [mockComponent] })
     });
-    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([
-      { componentName: 'myComp' }
-    ]);
+    (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([{ componentName: 'myComp' }]);
 
     const result = await buildEligibleComponents(metadataEntries, mockProject, mockOutputChannel as any);
 
@@ -96,7 +94,11 @@ describe('buildEligibleComponentsFromPath', () => {
       getSourceComponents: () => ({ toArray: () => [mockComponent] })
     });
 
-    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
+    const result = await buildEligibleComponentsFromPath(
+      '/workspace/force-app/main/default/lwc',
+      mockProject,
+      mockOutputChannel as any
+    );
 
     expect(result).not.toBeUndefined();
     expect(result!.componentsEligibleToProcess).toEqual([mockComponent]);
@@ -109,7 +111,11 @@ describe('buildEligibleComponentsFromPath', () => {
       getSourceComponents: () => ({ toArray: () => [] })
     });
 
-    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
+    const result = await buildEligibleComponentsFromPath(
+      '/workspace/force-app/main/default/lwc',
+      mockProject,
+      mockOutputChannel as any
+    );
 
     expect(result).toBeUndefined();
     expect(mockOutputChannel.show).toHaveBeenCalled();
@@ -121,7 +127,11 @@ describe('buildEligibleComponentsFromPath', () => {
     });
     (SourceComponentProcessor.getComponentsToSkip as jest.Mock).mockReturnValue([{ componentName: 'myComp' }]);
 
-    const result = await buildEligibleComponentsFromPath('/workspace/force-app/main/default/lwc', mockProject, mockOutputChannel as any);
+    const result = await buildEligibleComponentsFromPath(
+      '/workspace/force-app/main/default/lwc',
+      mockProject,
+      mockOutputChannel as any
+    );
 
     expect(result).toBeUndefined();
     expect(mockOutputChannel.show).toHaveBeenCalled();

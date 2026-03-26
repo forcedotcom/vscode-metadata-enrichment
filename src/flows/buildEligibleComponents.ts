@@ -48,9 +48,7 @@ export async function buildEligibleComponents(
   const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
 
   if (projectSourceComponents.length === 0) {
-    vscode.window.showWarningMessage(
-      getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0])
-    );
+    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0]));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.noComponents', metadataEntries[0]));
     outputChannel.show();
     return undefined;

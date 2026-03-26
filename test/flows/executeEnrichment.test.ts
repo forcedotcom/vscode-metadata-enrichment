@@ -60,7 +60,6 @@ describe('executeEnrichment', () => {
     expect(FileProcessor.updateMetadata).toHaveBeenCalledWith(mockComponents, mockEnrichmentRecords.recordSet);
     expect(mockEnrichmentRecords.updateWithResults).toHaveBeenCalledTimes(2);
   });
-
 });
 
 describe('reportResults', () => {
@@ -69,9 +68,7 @@ describe('reportResults', () => {
 
     reportResults(mockOutputChannel as any, mockMetrics as any);
 
-    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
-      expect.stringContaining('Enrichment complete. Total: 1')
-    );
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Enrichment complete. Total: 1'));
     expect(mockOutputChannel.show).toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
       expect.stringContaining('1 component(s) enriched successfully')
@@ -83,15 +80,31 @@ describe('reportResults', () => {
       total: 3,
       success: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'goodComp', requestId: 'req-1', message: '' }]
+        components: [
+          { typeName: 'LightningComponentBundle', componentName: 'goodComp', requestId: 'req-1', message: '' }
+        ]
       },
       skipped: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'skippedComp', requestId: '', message: 'Already up to date' }]
+        components: [
+          {
+            typeName: 'LightningComponentBundle',
+            componentName: 'skippedComp',
+            requestId: '',
+            message: 'Already up to date'
+          }
+        ]
       },
       fail: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'failedComp', requestId: 'req-2', message: 'Enrichment API error' }]
+        components: [
+          {
+            typeName: 'LightningComponentBundle',
+            componentName: 'failedComp',
+            requestId: 'req-2',
+            message: 'Enrichment API error'
+          }
+        ]
       }
     };
 
@@ -103,9 +116,7 @@ describe('reportResults', () => {
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('failedComp'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Failed'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Message: Enrichment API error'));
-    expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(
-      expect.stringContaining('1 failure(s)')
-    );
+    expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(expect.stringContaining('1 failure(s)'));
   });
 
   it('logs a component message field when it is non-empty', () => {
@@ -113,7 +124,9 @@ describe('reportResults', () => {
       total: 1,
       success: {
         count: 1,
-        components: [{ typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }]
+        components: [
+          { typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }
+        ]
       },
       skipped: { count: 0, components: [] },
       fail: { count: 0, components: [] }

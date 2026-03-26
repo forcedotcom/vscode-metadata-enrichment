@@ -17,12 +17,17 @@
 import * as vscode from 'vscode';
 import type { Connection } from '@salesforce/core';
 import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
-import { EnrichmentHandler, EnrichmentMetrics, EnrichmentRecords, FileProcessor } from '@salesforce/metadata-enrichment';
+import {
+  EnrichmentHandler,
+  EnrichmentMetrics,
+  EnrichmentRecords,
+  FileProcessor
+} from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
 
 /**
  * FLOW - Execute Enrichment
- * 
+ *
  * Executes enrichment for the given project source components and org connection.
  * Reports formatted results to the output channel and also displays pop-up messages to the user.
  */
@@ -38,7 +43,10 @@ export async function executeEnrichment(
   enrichmentRecords.updateWithResults(enrichmentResults);
 
   progress.report({ message: getMessage('command.metadata.enrich.progress.updating') });
-  const fileUpdatedRecords = await FileProcessor.updateMetadata(componentsEligibleToProcess, enrichmentRecords.recordSet);
+  const fileUpdatedRecords = await FileProcessor.updateMetadata(
+    componentsEligibleToProcess,
+    enrichmentRecords.recordSet
+  );
   enrichmentRecords.updateWithResults(Array.from(fileUpdatedRecords));
 
   const metrics = EnrichmentMetrics.createEnrichmentMetrics(Array.from(enrichmentRecords.recordSet));
@@ -47,11 +55,15 @@ export async function executeEnrichment(
 
 export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
   outputChannel.appendLine('');
-  outputChannel.appendLine(getMessage(
-    'command.metadata.enrich.log.complete',
-    String(metrics.total), String(metrics.success.count),
-    String(metrics.skipped.count), String(metrics.fail.count)
-  ));
+  outputChannel.appendLine(
+    getMessage(
+      'command.metadata.enrich.log.complete',
+      String(metrics.total),
+      String(metrics.success.count),
+      String(metrics.skipped.count),
+      String(metrics.fail.count)
+    )
+  );
 
   if (metrics.total > 0) {
     const allRows = [
@@ -62,7 +74,9 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
 
     for (const row of allRows) {
       outputChannel.appendLine('');
-      outputChannel.appendLine(`  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`);
+      outputChannel.appendLine(
+        `  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`
+      );
       outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.status', row.status)}`);
       if (row.requestId) {
         outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.requestId', row.requestId)}`);
@@ -85,8 +99,6 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
       getMessage('command.metadata.enrich.info.success', String(metrics.success.count))
     );
   } else {
-    vscode.window.showInformationMessage(
-      getMessage('command.metadata.enrich.info.allSkipped')
-    );
+    vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.allSkipped'));
   }
 }

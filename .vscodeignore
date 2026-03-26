@@ -1,0 +1,35 @@
+# Source and build artifacts
+**/*.map
+**/*.ts
+tsconfig.json
+tsconfig.tsbuildinfo
+src/**
+lib/**
+
+# Development config files
+.github/**
+esbuild.config.cjs
+.nvmrc
+.husky/**
+.eslintrc.json
+.eslintignore
+.prettierrc
+.prettierignore
+.editorconfig
+.vscode/**
+
+# Test files
+jest.config.js
+test/**
+coverage/**
+
+# Docs and extra files
+CONTRIBUTING.md
+DEVELOPING.md
+SECURITY.md
+CODE_OF_CONDUCT.md
+how_to_license.md
+
+# VCS
+.git/
+.gitignore
