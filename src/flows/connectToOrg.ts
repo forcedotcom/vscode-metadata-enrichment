@@ -15,7 +15,7 @@
  */
 
 import * as vscode from 'vscode';
-import { AuthInfo, Connection, Org } from '@salesforce/core';
+import { AuthInfo, type Connection, Org } from '@salesforce/core';
 import { getMessage } from '../utils/localization';
 
 export type OrgConnection = {

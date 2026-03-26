@@ -20,7 +20,7 @@ import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
 import {
   EnrichmentHandler,
   EnrichmentMetrics,
-  EnrichmentRecords,
+  type EnrichmentRecords,
   FileProcessor
 } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
