@@ -59,8 +59,13 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     return undefined;
   }
 
-  const org = await Org.create({ aliasOrUsername: selected.label });
-  const connection = org.getConnection();
-
-  return { username: selected.label, connection };
+  try {
+    const org = await Org.create({ aliasOrUsername: selected.label });
+    const connection = org.getConnection();
+    return { username: selected.label, connection };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.connectOrgFailed', message));
+    return undefined;
+  }
 }

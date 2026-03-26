@@ -16,7 +16,7 @@
 
 import * as vscode from 'vscode';
 import { EnrichmentHandler, EnrichmentMetrics, FileProcessor } from '@salesforce/metadata-enrichment';
-import { executeEnrichment, reportResults } from '../../src/flows/executeEnrichment';
+import { executeEnrichment } from '../../src/flows/executeEnrichment';
 
 jest.mock('@salesforce/metadata-enrichment', () => ({
   EnrichmentHandler: { enrich: jest.fn() },
@@ -62,11 +62,23 @@ describe('executeEnrichment', () => {
   });
 });
 
-describe('reportResults', () => {
-  it('writes summary lines and shows a success notification', () => {
-    (vscode.window.showInformationMessage as jest.Mock).mockReturnValue(undefined);
+describe('reportResults (via executeEnrichment)', () => {
+  const runWithMetrics = async (metrics: object) => {
+    (EnrichmentHandler.enrich as jest.Mock).mockResolvedValue([]);
+    (FileProcessor.updateMetadata as jest.Mock).mockResolvedValue(new Set());
+    (EnrichmentMetrics.createEnrichmentMetrics as jest.Mock).mockReturnValue(metrics);
+    const mockEnrichmentRecords = { updateWithResults: jest.fn(), recordSet: new Map() } as any;
+    await executeEnrichment(
+      mockComponents,
+      mockEnrichmentRecords,
+      mockConnection,
+      mockOutputChannel as any,
+      mockProgress as any
+    );
+  };
 
-    reportResults(mockOutputChannel as any, mockMetrics as any);
+  it('writes summary lines and shows a success notification', async () => {
+    await runWithMetrics(mockMetrics);
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Enrichment complete. Total: 1'));
     expect(mockOutputChannel.show).toHaveBeenCalled();
@@ -75,8 +87,8 @@ describe('reportResults', () => {
     );
   });
 
-  it('logs skipped and failed component rows and shows a warning when there are failures', () => {
-    const metricsWithFailures = {
+  it('logs skipped and failed component rows and shows a warning when there are failures', async () => {
+    await runWithMetrics({
       total: 3,
       success: {
         count: 1,
@@ -106,9 +118,7 @@ describe('reportResults', () => {
           }
         ]
       }
-    };
-
-    reportResults(mockOutputChannel as any, metricsWithFailures as any);
+    });
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('skippedComp'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Skipped'));
@@ -119,8 +129,8 @@ describe('reportResults', () => {
     expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(expect.stringContaining('1 failure(s)'));
   });
 
-  it('logs a component message field when it is non-empty', () => {
-    const metricsWithMessage = {
+  it('logs a component message field when it is non-empty', async () => {
+    await runWithMetrics({
       total: 1,
       success: {
         count: 1,
@@ -130,9 +140,7 @@ describe('reportResults', () => {
       },
       skipped: { count: 0, components: [] },
       fail: { count: 0, components: [] }
-    };
-
-    reportResults(mockOutputChannel as any, metricsWithMessage as any);
+    });
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
       expect.stringContaining('Message: Field populated from org')

@@ -4,6 +4,7 @@
   "command.metadata.enrich.pick.type.placeholder": "Select the metadata type to enrich",
   "command.metadata.enrich.pick.org.placeholder": "Select a target Salesforce org",
   "command.metadata.enrich.error.listOrgsFailed": "Failed to list authenticated orgs: {0}",
+  "command.metadata.enrich.error.connectOrgFailed": "Failed to connect to org: {0}",
   "command.metadata.enrich.error.noOrgs": "No authenticated Salesforce orgs found. Run \"sf org login web\" or \"sf org login device\" to authenticate.",
   "command.metadata.enrich.input.component.prompt": "Enter comma-separated component name(s). Wildcards (*) are supported.",
   "command.metadata.enrich.input.component.placeholder": "e.g. \"HelloWorld\" OR \"Component1,Component2\" OR \"Hello*\"",

@@ -53,7 +53,7 @@ export async function executeEnrichment(
   reportResults(outputChannel, metrics);
 }
 
-export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
+function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
   outputChannel.appendLine('');
   outputChannel.appendLine(
     getMessage(
