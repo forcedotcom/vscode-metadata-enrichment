@@ -39,7 +39,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const typeItem = await pickMetadataType();
     if (!typeItem) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
@@ -48,7 +48,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const metadataEntries = await inputComponentNames(typeItem.label);
     if (!metadataEntries) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
@@ -57,7 +57,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const orgResult = await pickOrgAndConnect();
     if (!orgResult) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 

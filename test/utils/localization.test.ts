@@ -31,6 +31,6 @@ describe('getMessage', () => {
     (vscode.l10n.t as jest.Mock).mockImplementationOnce(() => {
       throw new Error('l10n unavailable');
     });
-    expect(getMessage('command.metadata.enrich.cancelled')).toBe('command.metadata.enrich.cancelled');
+    expect(getMessage('command.metadata.enrich.info.cancelled')).toBe('command.metadata.enrich.info.cancelled');
   });
 });

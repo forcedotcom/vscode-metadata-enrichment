@@ -88,7 +88,7 @@
     "vscode:package": "npm run bundle:extension && npx vsce package",
     "vscode:local-install": "npm run vscode:package && code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
     "vscode:local-uninstall": "code --uninstall-extension salesforce.salesforce-metadata-enrichment",
-    "vscode:local-reinstall": "npm run vscode:package && code --uninstall-extension salesforce.salesforce-metadata-enrichment ; code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
+    "vscode:local-reinstall": "rm -f salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix && npm run vscode:package && code --uninstall-extension salesforce.salesforce-metadata-enrichment ; code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
     "prettier-check": "prettier --check .",

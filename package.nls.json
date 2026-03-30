@@ -19,7 +19,7 @@
   "command.metadata.enrich.warn.completedWithFailures": "Metadata enrichment completed with {0} failure(s). See Output panel for details.",
   "command.metadata.enrich.info.success": "Metadata enrichment complete. {0} component(s) enriched successfully.",
   "command.metadata.enrich.info.allSkipped": "Metadata enrichment complete. No components were enriched (all skipped).",
-  "command.metadata.enrich.cancelled": "Metadata enrichment was cancelled.",
+  "command.metadata.enrich.info.cancelled": "Metadata enrichment was cancelled.",
   "command.metadata.enrich.error.failed": "Metadata enrichment failed: {0}",
   "command.metadata.enrich.log.starting": "[Metadata Enrichment] Starting enrichment for: {0}",
   "command.metadata.enrich.log.targetOrg": "[Metadata Enrichment] Target org: {0}",

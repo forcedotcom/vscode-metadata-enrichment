@@ -45,10 +45,14 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     return undefined;
   }
 
-  const items = auths.map(auth => ({
-    label: auth.username,
-    description: auth.aliases?.join(', ')
-  }));
+  const items: vscode.QuickPickItem[] = auths.map(auth => {
+    const item: vscode.QuickPickItem = { label: auth.username };
+    const description = auth.aliases?.join(', ');
+    if (description) {
+      item.description = description;
+    }
+    return item;
+  });
 
   const selected = await vscode.window.showQuickPick(items, {
     placeHolder: getMessage('command.metadata.enrich.pick.org.placeholder'),

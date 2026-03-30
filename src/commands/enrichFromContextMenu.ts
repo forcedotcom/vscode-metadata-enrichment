@@ -61,7 +61,7 @@ export const registerMetadataEnrichContextCommand = (): vscode.Disposable => {
      */
     const orgResult = await pickOrgAndConnect();
     if (!orgResult) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
