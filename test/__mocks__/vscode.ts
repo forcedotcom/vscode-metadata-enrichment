@@ -35,7 +35,5 @@ export const commands = {
 export const ProgressLocation = { Notification: 15 };
 
 export const l10n = {
-  t: jest.fn((message: string, ...args: string[]) =>
-    args.reduce((msg, arg, i) => msg.replace(`{${i}}`, arg), message)
-  )
+  t: jest.fn((message: string, ...args: string[]) => args.reduce((msg, arg, i) => msg.replace(`{${i}}`, arg), message))
 };

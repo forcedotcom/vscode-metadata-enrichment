@@ -52,10 +52,7 @@ describe('inputComponentNames', () => {
 
     const result = await inputComponentNames('LightningComponentBundle');
 
-    expect(result).toEqual([
-      'LightningComponentBundle:comp1',
-      'LightningComponentBundle:comp2'
-    ]);
+    expect(result).toEqual(['LightningComponentBundle:comp1', 'LightningComponentBundle:comp2']);
   });
 
   it('deduplicates quoted and unquoted versions of the same name', async () => {
@@ -71,10 +68,7 @@ describe('inputComponentNames', () => {
 
     const result = await inputComponentNames('LightningComponentBundle');
 
-    expect(result).toEqual([
-      'LightningComponentBundle:comp1',
-      'LightningComponentBundle:comp2'
-    ]);
+    expect(result).toEqual(['LightningComponentBundle:comp1', 'LightningComponentBundle:comp2']);
   });
 
   it('returns undefined when the user cancels the input box', async () => {

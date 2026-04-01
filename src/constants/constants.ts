@@ -18,7 +18,10 @@ import type { QuickPickItem } from 'vscode';
 import { getMessage } from '../utils/localization';
 
 export const METADATA_ENRICH_COMMAND = 'sf.metadata.enrich';
+export const METADATA_ENRICH_CONTEXT_COMMAND = 'sf.metadata.enrich.context';
 
+// Make sure these types are in sync with the SDR registry
+// https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json
 export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
   {
     label: 'FlexiPage',
@@ -29,7 +32,7 @@ export const SUPPORTED_METADATA_TYPES: QuickPickItem[] = [
     description: getMessage('command.metadata.enrich.type.lwc')
   },
   {
-    label: 'LightningType',
+    label: 'LightningTypeBundle',
     description: getMessage('command.metadata.enrich.type.lightningtype')
   },
   {

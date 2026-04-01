@@ -12,12 +12,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules",
-    "lib",
-    "dist"
-  ]
+  "exclude": ["node_modules", "lib", "dist"]
 }

@@ -16,17 +16,14 @@
 
 import * as vscode from 'vscode';
 import { EnrichmentHandler, EnrichmentMetrics, FileProcessor } from '@salesforce/metadata-enrichment';
-import { executeEnrichment, reportResults } from '../../src/flows/executeEnrichment';
+import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { mockOutputChannel, mockProgress, mockConnection } from '../__mocks__/mocks';
 
 jest.mock('@salesforce/metadata-enrichment', () => ({
   EnrichmentHandler: { enrich: jest.fn() },
   EnrichmentMetrics: { createEnrichmentMetrics: jest.fn() },
   FileProcessor: { updateMetadata: jest.fn() }
 }));
-
-const mockOutputChannel = { appendLine: jest.fn(), show: jest.fn() };
-const mockProgress = { report: jest.fn() };
-const mockConnection = {} as any;
 const mockComponents = [{ fullName: 'myComp', name: 'myComp' }] as any[];
 
 const mockEnrichmentResults = [{ componentName: 'myComp', status: 'success' }];
@@ -60,42 +57,65 @@ describe('executeEnrichment', () => {
     expect(FileProcessor.updateMetadata).toHaveBeenCalledWith(mockComponents, mockEnrichmentRecords.recordSet);
     expect(mockEnrichmentRecords.updateWithResults).toHaveBeenCalledTimes(2);
   });
-
 });
 
-describe('reportResults', () => {
-  it('writes summary lines and shows a success notification', () => {
-    (vscode.window.showInformationMessage as jest.Mock).mockReturnValue(undefined);
-
-    reportResults(mockOutputChannel as any, mockMetrics as any);
-
-    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
-      expect.stringContaining('Enrichment complete. Total: 1')
+describe('reportResults (via executeEnrichment)', () => {
+  const runWithMetrics = async (metrics: object) => {
+    (EnrichmentHandler.enrich as jest.Mock).mockResolvedValue([]);
+    (FileProcessor.updateMetadata as jest.Mock).mockResolvedValue(new Set());
+    (EnrichmentMetrics.createEnrichmentMetrics as jest.Mock).mockReturnValue(metrics);
+    const mockEnrichmentRecords = { updateWithResults: jest.fn(), recordSet: new Map() } as any;
+    await executeEnrichment(
+      mockComponents,
+      mockEnrichmentRecords,
+      mockConnection,
+      mockOutputChannel as any,
+      mockProgress as any
     );
+  };
+
+  it('writes summary lines and shows a success notification', async () => {
+    await runWithMetrics(mockMetrics);
+
+    expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Enrichment complete. Total: 1'));
     expect(mockOutputChannel.show).toHaveBeenCalled();
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
       expect.stringContaining('1 component(s) enriched successfully')
     );
   });
 
-  it('logs skipped and failed component rows and shows a warning when there are failures', () => {
-    const metricsWithFailures = {
+  it('logs skipped and failed component rows and shows a warning when there are failures', async () => {
+    await runWithMetrics({
       total: 3,
       success: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'goodComp', requestId: 'req-1', message: '' }]
+        components: [
+          { typeName: 'LightningComponentBundle', componentName: 'goodComp', requestId: 'req-1', message: '' }
+        ]
       },
       skipped: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'skippedComp', requestId: '', message: 'Already up to date' }]
+        components: [
+          {
+            typeName: 'LightningComponentBundle',
+            componentName: 'skippedComp',
+            requestId: '',
+            message: 'Already up to date'
+          }
+        ]
       },
       fail: {
         count: 1,
-        components: [{ typeName: 'LightningComponentBundle', componentName: 'failedComp', requestId: 'req-2', message: 'Enrichment API error' }]
+        components: [
+          {
+            typeName: 'LightningComponentBundle',
+            componentName: 'failedComp',
+            requestId: 'req-2',
+            message: 'Enrichment API error'
+          }
+        ]
       }
-    };
-
-    reportResults(mockOutputChannel as any, metricsWithFailures as any);
+    });
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('skippedComp'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Skipped'));
@@ -103,23 +123,21 @@ describe('reportResults', () => {
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('failedComp'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Failed'));
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(expect.stringContaining('Message: Enrichment API error'));
-    expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(
-      expect.stringContaining('1 failure(s)')
-    );
+    expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(expect.stringContaining('1 failure(s)'));
   });
 
-  it('logs a component message field when it is non-empty', () => {
-    const metricsWithMessage = {
+  it('logs a component message field when it is non-empty', async () => {
+    await runWithMetrics({
       total: 1,
       success: {
         count: 1,
-        components: [{ typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }]
+        components: [
+          { typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }
+        ]
       },
       skipped: { count: 0, components: [] },
       fail: { count: 0, components: [] }
-    };
-
-    reportResults(mockOutputChannel as any, metricsWithMessage as any);
+    });
 
     expect(mockOutputChannel.appendLine).toHaveBeenCalledWith(
       expect.stringContaining('Message: Field populated from org')

@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-import { l10n } from 'vscode';
-import nls from '../../package.nls.json';
-
-export function getMessage(key: string, ...args: string[]): string {
-  if (!key) {
-    return '';
-  }
-  try {
-    const message = (nls as Record<string, string>)[key] ?? key;
-    return l10n.t(message, ...args);
-  } catch {
-    return key;
-  }
-}
+export const mockOutputChannel = { appendLine: jest.fn(), show: jest.fn() };
+export const mockProgress = { report: jest.fn() };
+export const mockConnection = {} as any;
+export const mockProject = { getPath: () => '/workspace' } as any;

@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-import { l10n } from 'vscode';
-import nls from '../../package.nls.json';
+import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
+import type { EnrichmentRecords } from '@salesforce/metadata-enrichment';
 
-export function getMessage(key: string, ...args: string[]): string {
-  if (!key) {
-    return '';
-  }
-  try {
-    const message = (nls as Record<string, string>)[key] ?? key;
-    return l10n.t(message, ...args);
-  } catch {
-    return key;
-  }
-}
+export type EligibleComponents = {
+  enrichmentRecords: EnrichmentRecords;
+  componentsEligibleToProcess: SourceComponent[];
+};

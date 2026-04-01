@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type OutputChannel, type Progress, window } from 'vscode';
 import type { Connection } from '@salesforce/core';
 import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
-import { EnrichmentHandler, EnrichmentMetrics, EnrichmentRecords, FileProcessor } from '@salesforce/metadata-enrichment';
+import {
+  EnrichmentHandler,
+  EnrichmentMetrics,
+  type EnrichmentRecords,
+  FileProcessor
+} from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
 
 /**
  * FLOW - Execute Enrichment
- * 
+ *
  * Executes enrichment for the given project source components and org connection.
  * Reports formatted results to the output channel and also displays pop-up messages to the user.
  */
@@ -30,28 +35,35 @@ export async function executeEnrichment(
   componentsEligibleToProcess: SourceComponent[],
   enrichmentRecords: EnrichmentRecords,
   connection: Connection,
-  outputChannel: vscode.OutputChannel,
-  progress: vscode.Progress<{ message?: string }>
+  outputChannel: OutputChannel,
+  progress: Progress<{ message?: string }>
 ): Promise<void> {
   progress.report({ message: getMessage('command.metadata.enrich.progress.executing') });
   const enrichmentResults = await EnrichmentHandler.enrich(connection, componentsEligibleToProcess);
   enrichmentRecords.updateWithResults(enrichmentResults);
 
   progress.report({ message: getMessage('command.metadata.enrich.progress.updating') });
-  const fileUpdatedRecords = await FileProcessor.updateMetadata(componentsEligibleToProcess, enrichmentRecords.recordSet);
+  const fileUpdatedRecords = await FileProcessor.updateMetadata(
+    componentsEligibleToProcess,
+    enrichmentRecords.recordSet
+  );
   enrichmentRecords.updateWithResults(Array.from(fileUpdatedRecords));
 
   const metrics = EnrichmentMetrics.createEnrichmentMetrics(Array.from(enrichmentRecords.recordSet));
   reportResults(outputChannel, metrics);
 }
 
-export function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
+function reportResults(outputChannel: OutputChannel, metrics: EnrichmentMetrics): void {
   outputChannel.appendLine('');
-  outputChannel.appendLine(getMessage(
-    'command.metadata.enrich.log.complete',
-    String(metrics.total), String(metrics.success.count),
-    String(metrics.skipped.count), String(metrics.fail.count)
-  ));
+  outputChannel.appendLine(
+    getMessage(
+      'command.metadata.enrich.log.complete',
+      String(metrics.total),
+      String(metrics.success.count),
+      String(metrics.skipped.count),
+      String(metrics.fail.count)
+    )
+  );
 
   if (metrics.total > 0) {
     const allRows = [
@@ -62,7 +74,9 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
 
     for (const row of allRows) {
       outputChannel.appendLine('');
-      outputChannel.appendLine(`  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`);
+      outputChannel.appendLine(
+        `  ${getMessage('command.metadata.enrich.log.component', row.typeName, row.componentName)}`
+      );
       outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.status', row.status)}`);
       if (row.requestId) {
         outputChannel.appendLine(`    ${getMessage('command.metadata.enrich.log.field.requestId', row.requestId)}`);
@@ -77,16 +91,12 @@ export function reportResults(outputChannel: vscode.OutputChannel, metrics: Enri
   outputChannel.show();
 
   if (metrics.fail.count > 0) {
-    vscode.window.showWarningMessage(
+    window.showWarningMessage(
       getMessage('command.metadata.enrich.warn.completedWithFailures', String(metrics.fail.count))
     );
   } else if (metrics.success.count > 0) {
-    vscode.window.showInformationMessage(
-      getMessage('command.metadata.enrich.info.success', String(metrics.success.count))
-    );
+    window.showInformationMessage(getMessage('command.metadata.enrich.info.success', String(metrics.success.count)));
   } else {
-    vscode.window.showInformationMessage(
-      getMessage('command.metadata.enrich.info.allSkipped')
-    );
+    window.showInformationMessage(getMessage('command.metadata.enrich.info.allSkipped'));
   }
 }

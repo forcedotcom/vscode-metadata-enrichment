@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type OutputChannel, window } from 'vscode';
 import { SfProject } from '@salesforce/core';
-import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
-import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
+import { ComponentSetBuilder, type SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
-
-export type EligibleComponents = {
-  enrichmentRecords: EnrichmentRecords;
-  componentsEligibleToProcess: SourceComponent[];
-};
+import type { EligibleComponents } from '../constants/types';
 
 /**
  * FLOW - Build Eligible Components
@@ -37,7 +32,7 @@ export type EligibleComponents = {
 export async function buildEligibleComponents(
   metadataEntries: string[],
   project: SfProject,
-  outputChannel: vscode.OutputChannel
+  outputChannel: OutputChannel
 ): Promise<EligibleComponents | undefined> {
   const projectComponentSet = await ComponentSetBuilder.build({
     metadata: {
@@ -49,9 +44,7 @@ export async function buildEligibleComponents(
   const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
 
   if (projectSourceComponents.length === 0) {
-    vscode.window.showWarningMessage(
-      getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0])
-    );
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0]));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.noComponents', metadataEntries[0]));
     outputChannel.show();
     return undefined;
@@ -70,25 +63,76 @@ export async function buildEligibleComponents(
   );
   enrichmentRecords.addRecords(componentsToSkip);
 
-  const componentsEligibleToProcess = projectSourceComponents.filter(component => {
-    const name = component.fullName ?? component.name;
-    if (!name) {
-      return false;
-    }
-    for (const skip of componentsToSkip) {
-      if (skip.componentName === name) {
-        return false;
-      }
-    }
-    return true;
-  });
+  const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
 
   if (componentsEligibleToProcess.length === 0) {
-    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
     outputChannel.show();
     return undefined;
   }
 
   return { enrichmentRecords, componentsEligibleToProcess };
+}
+
+/**
+ * FLOW - Build Eligible Components From Path
+ *
+ * Given a file system path (from a context menu selection), resolves the matching
+ * source components using a sourcepath-based lookup and checks eligibility for enrichment.
+ * Displays both pop-up and output channel messages if no components are found or all are skipped.
+ */
+export async function buildEligibleComponentsFromPath(
+  fsPath: string,
+  project: SfProject,
+  outputChannel: OutputChannel
+): Promise<EligibleComponents | undefined> {
+  const projectComponentSet = await ComponentSetBuilder.build({
+    sourcepath: [fsPath]
+  });
+
+  const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
+
+  if (projectSourceComponents.length === 0) {
+    window.showWarningMessage(getMessage('command.metadata.enrich.context.warn.noComponents'));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.context.log.noComponents'));
+    outputChannel.show();
+    return undefined;
+  }
+
+  outputChannel.appendLine(
+    getMessage('command.metadata.enrich.log.foundComponents', String(projectSourceComponents.length))
+  );
+
+  const metadataEntries = projectSourceComponents.map(c => `${c.type.name}:${c.fullName ?? c.name}`);
+  const enrichmentRecords = new EnrichmentRecords(projectSourceComponents);
+
+  const componentsToSkip = SourceComponentProcessor.getComponentsToSkip(
+    projectSourceComponents,
+    metadataEntries,
+    project.getPath()
+  );
+  enrichmentRecords.addRecords(componentsToSkip);
+
+  const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
+
+  if (componentsEligibleToProcess.length === 0) {
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
+    outputChannel.show();
+    return undefined;
+  }
+
+  return { enrichmentRecords, componentsEligibleToProcess };
+}
+
+function filterEligibleComponents(
+  components: SourceComponent[],
+  componentsToSkip: ReturnType<typeof SourceComponentProcessor.getComponentsToSkip>
+): SourceComponent[] {
+  const skipNames = new Set(Array.from(componentsToSkip, s => s.componentName));
+  return components.filter(c => {
+    const name = c.fullName ?? c.name;
+    return name && !skipNames.has(name);
+  });
 }

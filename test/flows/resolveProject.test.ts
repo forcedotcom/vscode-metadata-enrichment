@@ -40,9 +40,7 @@ describe('resolveProject', () => {
     const result = await resolveProject();
 
     expect(result).toBeUndefined();
-    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
-      expect.stringContaining('No workspace folder')
-    );
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('No workspace folder'));
     expect(SfProject.resolve).not.toHaveBeenCalled();
 
     (vscode.workspace as any).workspaceFolders = original;

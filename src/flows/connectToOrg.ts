@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
-import { AuthInfo, Connection, Org } from '@salesforce/core';
+import { type QuickPickItem, window } from 'vscode';
+import { AuthInfo, type Connection, Org } from '@salesforce/core';
 import { getMessage } from '../utils/localization';
 
 export type OrgConnection = {
@@ -25,8 +25,8 @@ export type OrgConnection = {
 
 /**
  * FLOW - Connect to Org
- * 
- * Lists all the locally authenticated orgs in the user's DX project. 
+ *
+ * Lists all the locally authenticated orgs in the user's DX project.
  * Prompts the user to select one and returns the corresponding org connection
  * Displays pop-up message to user if no orgs are found.
  */
@@ -36,21 +36,25 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     auths = await AuthInfo.listAllAuthorizations();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.listOrgsFailed', message));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.listOrgsFailed', message));
     return undefined;
   }
 
   if (auths.length === 0) {
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.noOrgs'));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.noOrgs'));
     return undefined;
   }
 
-  const items = auths.map(auth => ({
-    label: auth.username,
-    description: auth.aliases?.join(', ')
-  }));
+  const items: QuickPickItem[] = auths.map(auth => {
+    const item: QuickPickItem = { label: auth.username };
+    const description = auth.aliases?.join(', ');
+    if (description) {
+      item.description = description;
+    }
+    return item;
+  });
 
-  const selected = await vscode.window.showQuickPick(items, {
+  const selected = await window.showQuickPick(items, {
     placeHolder: getMessage('command.metadata.enrich.pick.org.placeholder'),
     ignoreFocusOut: true
   });
@@ -59,8 +63,13 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     return undefined;
   }
 
-  const org = await Org.create({ aliasOrUsername: selected.label });
-  const connection = org.getConnection();
-
-  return { username: selected.label, connection };
+  try {
+    const org = await Org.create({ aliasOrUsername: selected.label });
+    const connection = org.getConnection();
+    return { username: selected.label, connection };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.connectOrgFailed', message));
+    return undefined;
+  }
 }

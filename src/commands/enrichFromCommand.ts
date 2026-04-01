@@ -25,15 +25,21 @@ import { executeEnrichment } from '../flows/executeEnrichment';
 import { METADATA_ENRICH_COMMAND } from '../constants/constants';
 import { getMessage } from '../utils/localization';
 
+/**
+ * COMMAND - Metadata Enrichment Command
+ *
+ * Enrich metadata in VS Code via a guided workflow triggered from the Command Palette.
+ * User inputs the metadata type, the target component name(s), and the target org.
+ * Metadata enrichment executes and writes results to corresponding local project metadata file(s).
+ */
 export const registerMetadataEnrichCommand = (): vscode.Disposable => {
   return vscode.commands.registerCommand(METADATA_ENRICH_COMMAND, async () => {
-
     /**
      * Step #1 - Prompt user to input a target metadata type to enrich
      */
     const typeItem = await pickMetadataType();
     if (!typeItem) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
@@ -42,7 +48,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const metadataEntries = await inputComponentNames(typeItem.label);
     if (!metadataEntries) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
@@ -51,7 +57,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
      */
     const orgResult = await pickOrgAndConnect();
     if (!orgResult) {
-      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.cancelled'));
+      vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.cancelled'));
       return;
     }
 
@@ -65,7 +71,7 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
     const outputChannel = getOutputChannel();
 
     /**
-     * Step #5 - Gather eligible components based on input params and execute metadata enrichment 
+     * Step #5 - Gather eligible components based on input params and execute metadata enrichment
      *           Keep user updated with progress with final results printed to console
      */
     try {
@@ -91,7 +97,13 @@ export const registerMetadataEnrichCommand = (): vscode.Disposable => {
             getMessage('command.metadata.enrich.log.eligibleComponents', String(componentsEligibleToProcess.length))
           );
 
-          await executeEnrichment(componentsEligibleToProcess, enrichmentRecords, orgResult.connection, outputChannel, progress);
+          await executeEnrichment(
+            componentsEligibleToProcess,
+            enrichmentRecords,
+            orgResult.connection,
+            outputChannel,
+            progress
+          );
         }
       );
     } catch (err) {

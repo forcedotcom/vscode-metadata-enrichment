@@ -26,9 +26,11 @@ describe('getMessage', () => {
     expect(getMessage('')).toBe('');
   });
 
-  it('returns an empty string when vscode.l10n.t throws', () => {
+  it('returns the key when vscode.l10n.t throws', () => {
     const vscode = require('vscode');
-    (vscode.l10n.t as jest.Mock).mockImplementationOnce(() => { throw new Error('l10n unavailable'); });
-    expect(getMessage('command.metadata.enrich.cancelled')).toBe('');
+    (vscode.l10n.t as jest.Mock).mockImplementationOnce(() => {
+      throw new Error('l10n unavailable');
+    });
+    expect(getMessage('command.metadata.enrich.info.cancelled')).toBe('command.metadata.enrich.info.cancelled');
   });
 });

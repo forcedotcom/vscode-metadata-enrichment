@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
-import { registerMetadataEnrichCommand } from './commands/metadataEnrich';
+import { type ExtensionContext } from 'vscode';
+import { registerMetadataEnrichCommand } from './commands/enrichFromCommand';
+import { registerMetadataEnrichContextCommand } from './commands/enrichFromContextMenu';
 import { disposeOutputChannel } from './utils/outputChannel';
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: ExtensionContext): void {
   context.subscriptions.push(registerMetadataEnrichCommand());
+  context.subscriptions.push(registerMetadataEnrichContextCommand());
 }
 
 export function deactivate(): void {
