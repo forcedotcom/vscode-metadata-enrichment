@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { window } from 'vscode';
 import { getMessage } from '../utils/localization';
 
 /**
@@ -25,7 +25,7 @@ import { getMessage } from '../utils/localization';
  * Deduplicates and trims whitespaces from user input.
  */
 export async function inputComponentNames(typeLabel: string): Promise<string[] | undefined> {
-  const input = await vscode.window.showInputBox({
+  const input = await window.showInputBox({
     prompt: getMessage('command.metadata.enrich.input.component.prompt'),
     placeHolder: getMessage('command.metadata.enrich.input.component.placeholder'),
     ignoreFocusOut: true,

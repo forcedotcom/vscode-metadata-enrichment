@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type OutputChannel, type Progress, window } from 'vscode';
 import type { Connection } from '@salesforce/core';
 import type { SourceComponent } from '@salesforce/source-deploy-retrieve';
 import {
@@ -35,8 +35,8 @@ export async function executeEnrichment(
   componentsEligibleToProcess: SourceComponent[],
   enrichmentRecords: EnrichmentRecords,
   connection: Connection,
-  outputChannel: vscode.OutputChannel,
-  progress: vscode.Progress<{ message?: string }>
+  outputChannel: OutputChannel,
+  progress: Progress<{ message?: string }>
 ): Promise<void> {
   progress.report({ message: getMessage('command.metadata.enrich.progress.executing') });
   const enrichmentResults = await EnrichmentHandler.enrich(connection, componentsEligibleToProcess);
@@ -53,7 +53,7 @@ export async function executeEnrichment(
   reportResults(outputChannel, metrics);
 }
 
-function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentMetrics): void {
+function reportResults(outputChannel: OutputChannel, metrics: EnrichmentMetrics): void {
   outputChannel.appendLine('');
   outputChannel.appendLine(
     getMessage(
@@ -91,14 +91,12 @@ function reportResults(outputChannel: vscode.OutputChannel, metrics: EnrichmentM
   outputChannel.show();
 
   if (metrics.fail.count > 0) {
-    vscode.window.showWarningMessage(
+    window.showWarningMessage(
       getMessage('command.metadata.enrich.warn.completedWithFailures', String(metrics.fail.count))
     );
   } else if (metrics.success.count > 0) {
-    vscode.window.showInformationMessage(
-      getMessage('command.metadata.enrich.info.success', String(metrics.success.count))
-    );
+    window.showInformationMessage(getMessage('command.metadata.enrich.info.success', String(metrics.success.count)));
   } else {
-    vscode.window.showInformationMessage(getMessage('command.metadata.enrich.info.allSkipped'));
+    window.showInformationMessage(getMessage('command.metadata.enrich.info.allSkipped'));
   }
 }

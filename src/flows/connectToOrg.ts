@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type QuickPickItem, window } from 'vscode';
 import { AuthInfo, type Connection, Org } from '@salesforce/core';
 import { getMessage } from '../utils/localization';
 
@@ -36,17 +36,17 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     auths = await AuthInfo.listAllAuthorizations();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.listOrgsFailed', message));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.listOrgsFailed', message));
     return undefined;
   }
 
   if (auths.length === 0) {
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.noOrgs'));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.noOrgs'));
     return undefined;
   }
 
-  const items: vscode.QuickPickItem[] = auths.map(auth => {
-    const item: vscode.QuickPickItem = { label: auth.username };
+  const items: QuickPickItem[] = auths.map(auth => {
+    const item: QuickPickItem = { label: auth.username };
     const description = auth.aliases?.join(', ');
     if (description) {
       item.description = description;
@@ -54,7 +54,7 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     return item;
   });
 
-  const selected = await vscode.window.showQuickPick(items, {
+  const selected = await window.showQuickPick(items, {
     placeHolder: getMessage('command.metadata.enrich.pick.org.placeholder'),
     ignoreFocusOut: true
   });
@@ -69,7 +69,7 @@ export async function pickOrgAndConnect(): Promise<OrgConnection | undefined> {
     return { username: selected.label, connection };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.connectOrgFailed', message));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.connectOrgFailed', message));
     return undefined;
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type OutputChannel, window } from 'vscode';
 import { SfProject } from '@salesforce/core';
 import { ComponentSetBuilder, type SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
@@ -32,7 +32,7 @@ import type { EligibleComponents } from '../constants/types';
 export async function buildEligibleComponents(
   metadataEntries: string[],
   project: SfProject,
-  outputChannel: vscode.OutputChannel
+  outputChannel: OutputChannel
 ): Promise<EligibleComponents | undefined> {
   const projectComponentSet = await ComponentSetBuilder.build({
     metadata: {
@@ -44,7 +44,7 @@ export async function buildEligibleComponents(
   const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
 
   if (projectSourceComponents.length === 0) {
-    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0]));
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.noComponents', metadataEntries[0]));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.noComponents', metadataEntries[0]));
     outputChannel.show();
     return undefined;
@@ -66,7 +66,7 @@ export async function buildEligibleComponents(
   const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
 
   if (componentsEligibleToProcess.length === 0) {
-    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
     outputChannel.show();
     return undefined;
@@ -85,7 +85,7 @@ export async function buildEligibleComponents(
 export async function buildEligibleComponentsFromPath(
   fsPath: string,
   project: SfProject,
-  outputChannel: vscode.OutputChannel
+  outputChannel: OutputChannel
 ): Promise<EligibleComponents | undefined> {
   const projectComponentSet = await ComponentSetBuilder.build({
     sourcepath: [fsPath]
@@ -94,7 +94,7 @@ export async function buildEligibleComponentsFromPath(
   const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
 
   if (projectSourceComponents.length === 0) {
-    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.context.warn.noComponents'));
+    window.showWarningMessage(getMessage('command.metadata.enrich.context.warn.noComponents'));
     outputChannel.appendLine(getMessage('command.metadata.enrich.context.log.noComponents'));
     outputChannel.show();
     return undefined;
@@ -117,7 +117,7 @@ export async function buildEligibleComponentsFromPath(
   const componentsEligibleToProcess = filterEligibleComponents(projectSourceComponents, componentsToSkip);
 
   if (componentsEligibleToProcess.length === 0) {
-    vscode.window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
+    window.showWarningMessage(getMessage('command.metadata.enrich.warn.allSkipped'));
     outputChannel.appendLine(getMessage('command.metadata.enrich.log.allSkipped'));
     outputChannel.show();
     return undefined;

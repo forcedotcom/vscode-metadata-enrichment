@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { type QuickPickItem, window } from 'vscode';
 import { SUPPORTED_METADATA_TYPES } from '../constants/constants';
 import { getMessage } from '../utils/localization';
 
@@ -24,8 +24,8 @@ import { getMessage } from '../utils/localization';
  * Prompts the user to select a target metadata type to enrich.
  * Only one metadata type can be selected. Multiple metadata types in one operation are not supported.
  */
-export async function pickMetadataType(): Promise<vscode.QuickPickItem | undefined> {
-  return vscode.window.showQuickPick(SUPPORTED_METADATA_TYPES, {
+export async function pickMetadataType(): Promise<QuickPickItem | undefined> {
+  return window.showQuickPick(SUPPORTED_METADATA_TYPES, {
     placeHolder: getMessage('command.metadata.enrich.pick.type.placeholder'),
     ignoreFocusOut: true
   });

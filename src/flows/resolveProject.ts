@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { window, workspace } from 'vscode';
 import { SfProject } from '@salesforce/core';
 import { getMessage } from '../utils/localization';
 
@@ -25,9 +25,9 @@ import { getMessage } from '../utils/localization';
  * Displays pop-up error to user if no workspace folder is open.
  */
 export async function resolveProject(): Promise<SfProject | undefined> {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const workspaceFolder = workspace.workspaceFolders?.[0];
   if (!workspaceFolder) {
-    vscode.window.showErrorMessage(getMessage('command.metadata.enrich.error.noWorkspace'));
+    window.showErrorMessage(getMessage('command.metadata.enrich.error.noWorkspace'));
     return undefined;
   }
   return SfProject.resolve(workspaceFolder.uri.fsPath);

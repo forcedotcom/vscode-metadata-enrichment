@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
+import { l10n } from 'vscode';
 import nls from '../../package.nls.json';
 
 export function getMessage(key: string, ...args: string[]): string {
@@ -23,7 +23,7 @@ export function getMessage(key: string, ...args: string[]): string {
   }
   try {
     const message = (nls as Record<string, string>)[key] ?? key;
-    return vscode.l10n.t(message, ...args);
+    return l10n.t(message, ...args);
   } catch {
     return key;
   }
