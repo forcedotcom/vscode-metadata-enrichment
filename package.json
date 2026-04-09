@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@salesforce/core": "^8.24.3",
-    "@salesforce/metadata-enrichment": "^0.0.13",
+    "@salesforce/metadata-enrichment": "^0.0.14",
     "@salesforce/source-deploy-retrieve": "^12.31.14",
     "concat-map": "^0.0.2",
     "minimatch": "^9.0.5"
