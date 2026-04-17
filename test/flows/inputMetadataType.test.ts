@@ -25,9 +25,22 @@ describe('pickMetadataType', () => {
     const result = await pickMetadataType();
 
     expect(vscode.window.showQuickPick).toHaveBeenCalledWith(
-      expect.arrayContaining([expect.objectContaining({ label: 'LightningComponentBundle' })]),
+      expect.arrayContaining([
+        expect.objectContaining({ label: 'CustomObject' }),
+        expect.objectContaining({ label: 'LightningComponentBundle' })
+      ]),
       expect.objectContaining({ ignoreFocusOut: true })
     );
     expect(result).toBe(selectedItem);
+  });
+
+  it('only exposes CustomObject and LightningComponentBundle as supported types', async () => {
+    (vscode.window.showQuickPick as jest.Mock).mockResolvedValue(undefined);
+
+    await pickMetadataType();
+
+    const [items] = (vscode.window.showQuickPick as jest.Mock).mock.calls.at(-1) as [{ label: string }[]];
+    const labels = items.map(i => i.label).sort();
+    expect(labels).toEqual(['CustomObject', 'LightningComponentBundle']);
   });
 });

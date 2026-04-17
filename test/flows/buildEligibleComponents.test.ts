@@ -134,4 +134,21 @@ describe('buildEligibleComponentsFromPath', () => {
     expect(result).toBeUndefined();
     expect(mockOutputChannel.show).toHaveBeenCalled();
   });
+
+  it('filters out components whose type is not CustomObject or LightningComponentBundle', async () => {
+    const flexiPageComponent = { fullName: 'myPage', name: 'myPage', type: { name: 'FlexiPage' } };
+    const lightningTypeBundleComponent = { fullName: 'myType', name: 'myType', type: { name: 'LightningTypeBundle' } };
+    (ComponentSetBuilder.build as jest.Mock).mockResolvedValue({
+      getSourceComponents: () => ({ toArray: () => [flexiPageComponent, lightningTypeBundleComponent] })
+    });
+
+    const result = await buildEligibleComponentsFromPath(
+      '/workspace/force-app/main/default/flexipages',
+      mockProject,
+      mockOutputChannel as any
+    );
+
+    expect(result).toBeUndefined();
+    expect(mockOutputChannel.show).toHaveBeenCalled();
+  });
 });

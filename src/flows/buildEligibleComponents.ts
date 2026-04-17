@@ -19,6 +19,7 @@ import { SfProject } from '@salesforce/core';
 import { ComponentSetBuilder, type SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
 import { getMessage } from '../utils/localization';
+import { SUPPORTED_METADATA_TYPES } from '../constants/constants';
 import type { EligibleComponents } from '../constants/types';
 
 /**
@@ -91,7 +92,9 @@ export async function buildEligibleComponentsFromPath(
     sourcepath: [fsPath]
   });
 
-  const projectSourceComponents = projectComponentSet.getSourceComponents().toArray();
+  const allSourceComponents = projectComponentSet.getSourceComponents().toArray();
+  const supportedTypeNames = new Set(SUPPORTED_METADATA_TYPES.map(t => t.label));
+  const projectSourceComponents = allSourceComponents.filter(c => supportedTypeNames.has(c.type.name));
 
   if (projectSourceComponents.length === 0) {
     window.showWarningMessage(getMessage('command.metadata.enrich.context.warn.noComponents'));

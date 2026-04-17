@@ -10,13 +10,9 @@ This extension can be installed from the [Visual Studio Code Marketplace](https:
 
 Alternatively, it can be found in the [VSX Registry](https://open-vsx.org/) to install across flavors of VS Code forks.
 
-## Usage
-
-Details to be added here - coming soon!
-
 ## Developing
 
-See [DEVELOPING.md](DEVELPING.md)
+See [DEVELOPING.md](DEVELOPING.md)
 
 ## Issues
 
