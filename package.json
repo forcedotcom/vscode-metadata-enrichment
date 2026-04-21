@@ -15,7 +15,7 @@
   "categories": [
     "Other"
   ],
-  "main": "dist/extension.js",
+  "main": "dist/index.js",
   "extensionDependencies": [
     "salesforce.salesforcedx-vscode-core"
   ],
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@salesforce/core": "^8.24.3",
-    "@salesforce/metadata-enrichment": "^0.0.14",
+    "@salesforce/metadata-enrichment": "^0.0.15",
     "@salesforce/source-deploy-retrieve": "^12.31.14",
     "concat-map": "^0.0.2",
     "minimatch": "^9.0.5"
@@ -83,9 +83,9 @@
     "build": "tsc --build",
     "compile": "yarn build",
     "compile:clean": "tsc --build --clean",
-    "bundle:extension": "node esbuild.config.cjs",
-    "vscode:prepublish": "npm run bundle:extension",
-    "vscode:package": "npm run bundle:extension && npx vsce package",
+    "bundle:extension": "node esbuild.config.mjs",
+    "vscode:prepublish": "yarn bundle:extension",
+    "vscode:package": "yarn bundle:extension && npx vsce package --allow-package-all-secrets",
     "vscode:local-install": "npm run vscode:package && code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
     "vscode:local-uninstall": "code --uninstall-extension salesforce.salesforce-metadata-enrichment",
     "vscode:local-reinstall": "rm -f salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix && npm run vscode:package && code --uninstall-extension salesforce.salesforce-metadata-enrichment ; code --install-extension salesforce-metadata-enrichment-$(node -p \"require('./package.json').version\").vsix",
@@ -93,7 +93,7 @@
     "prettier": "prettier --write .",
     "prettier-check": "prettier --check .",
     "commitlint": "commitlint",
-    "clean": "tsc --build --clean && rm -rf lib dist node_modules *.vsix",
+    "clean": "tsc --build --clean && rm -rf out dist node_modules *.vsix",
     "test": "jest",
     "prepare": "husky"
   }

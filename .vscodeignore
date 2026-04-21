@@ -4,7 +4,7 @@
 tsconfig.json
 tsconfig.tsbuildinfo
 src/**
-lib/**
+out/**
 
 # Development config files
 .github/**
