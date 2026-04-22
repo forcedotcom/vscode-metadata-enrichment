@@ -1,13 +1,13 @@
-const { build } = require('esbuild');
+import { build } from 'esbuild';
 
-build({
+await build({
   bundle: true,
-  entryPoints: ['./src/extension.ts'],
+  entryPoints: ['./out/src/extension.js'],
   external: ['vscode', '@salesforce/core', '@salesforce/source-deploy-retrieve', '@salesforce/metadata-enrichment'],
   format: 'cjs',
-  outdir: 'dist',
+  outfile: 'dist/index.js',
   platform: 'node',
   sourcemap: true,
-  minify: false,
+  minify: true,
   banner: { js: 'process.env.SF_DISABLE_LOG_FILE = "true";' }
 }).catch(() => process.exit(1));

@@ -3,8 +3,8 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: ['**/test/**/?(*.)+(spec|test).ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/lib/', '/dist/'],
-  modulePathIgnorePatterns: ['/lib/', '/dist/'],
+  testPathIgnorePatterns: ['/node_modules/', '/out/', '/dist/'],
+  modulePathIgnorePatterns: ['/out/', '/dist/'],
   moduleNameMapper: {
     '^vscode$': '<rootDir>/test/__mocks__/vscode.ts'
   },

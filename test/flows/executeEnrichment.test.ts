@@ -132,7 +132,12 @@ describe('reportResults (via executeEnrichment)', () => {
       success: {
         count: 1,
         components: [
-          { typeName: 'FlexiPage', componentName: 'myPage', requestId: 'req-3', message: 'Field populated from org' }
+          {
+            typeName: 'CustomObject',
+            componentName: 'MyObject__c',
+            requestId: 'req-3',
+            message: 'Field populated from org'
+          }
         ]
       },
       skipped: { count: 0, components: [] },
