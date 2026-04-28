@@ -1,0 +1,88 @@
+name: Publish
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to publish (e.g. 1.2.3 — must match an existing release)'
+        required: true
+        type: string
+
+jobs:
+  resolve-version:
+    name: Resolve Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - name: Resolve version from trigger
+        id: resolve
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then
+            VERSION="${RELEASE_TAG#v}"
+          else
+            VERSION="$INPUT_VERSION"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  publish-vscode-marketplace:
+    name: Publish to VS Code Marketplace
+    needs: resolve-version
+    runs-on: ubuntu-latest
+    environment: publish
+    env:
+      RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Download VSIX from release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir ./extensions
+          gh release download "v$RELEASE_VERSION" -D ./extensions
+      - name: Publish to Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          find ./extensions -name "*.vsix" -exec npx vsce publish --skip-duplicate --pat "$VSCE_PAT" --packagePath {} \;
+
+  publish-open-vsx:
+    name: Publish to Open VSX Registry
+    needs: resolve-version
+    runs-on: ubuntu-latest
+    environment: publish
+    env:
+      RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Download VSIX from release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir ./extensions
+          gh release download "v$RELEASE_VERSION" -D ./extensions
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          find ./extensions -name "*.vsix" -exec npx ovsx publish --skip-duplicate {} -p "$OVSX_PAT" \;
