@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import { type ExtensionContext } from 'vscode';
+import { commands, type ExtensionContext } from 'vscode';
 import { registerMetadataEnrichCommand } from './commands/enrichFromCommand';
 import { registerMetadataEnrichContextCommand } from './commands/enrichFromContextMenu';
 import { disposeOutputChannel } from './utils/outputChannel';
 
+const PROJECT_OPENED_CONTEXT = 'sf:metadata_enrichment_project_opened';
+
 export function activate(context: ExtensionContext): void {
+  void commands.executeCommand('setContext', PROJECT_OPENED_CONTEXT, true);
   context.subscriptions.push(registerMetadataEnrichCommand());
   context.subscriptions.push(registerMetadataEnrichContextCommand());
 }
 
 export function deactivate(): void {
+  void commands.executeCommand('setContext', PROJECT_OPENED_CONTEXT, false);
   disposeOutputChannel();
 }

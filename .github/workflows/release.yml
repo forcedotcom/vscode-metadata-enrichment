@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 1.2.3)'
+        required: true
+        type: string
+
+jobs:
+  package:
+    name: Package Extension
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Bump version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          npm version "$RELEASE_VERSION" --no-git-tag-version
+          git add package.json
+          git commit -m "chore: bump version to $RELEASE_VERSION [skip ci]"
+          git push
+      - run: yarn vscode:package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix-${{ inputs.version }}
+          path: '*.vsix'
+
+  tag-and-release:
+    name: Tag & GitHub Release
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: vsix-${{ inputs.version }}
+          path: ./extensions
+      - name: Create tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull
+          git tag "v$RELEASE_VERSION"
+          git push origin "v$RELEASE_VERSION"
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v$RELEASE_VERSION" ./extensions/*.vsix \
+            --title "v$RELEASE_VERSION" \
+            --generate-notes

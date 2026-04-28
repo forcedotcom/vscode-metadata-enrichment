@@ -16,9 +16,6 @@
     "Other"
   ],
   "main": "dist/index.js",
-  "extensionDependencies": [
-    "salesforce.salesforcedx-vscode-core"
-  ],
   "activationEvents": [
     "workspaceContains:sfdx-project.json"
   ],
@@ -46,7 +43,7 @@
       "explorer/context": [
         {
           "command": "sf.metadata.enrich.context",
-          "when": "sf:project_opened && isFileSystemResource"
+          "when": "sf:metadata_enrichment_project_opened && isFileSystemResource"
         }
       ]
     }
@@ -62,18 +59,22 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@types/jest": "^30.0.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.0.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.29.0",
+    "glob": "^13.0.6",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
+    "mocha": "^11.7.5",
     "prettier": "^3.8.1",
     "pretty-quick": "^4.2.2",
     "ts-jest": "^29.4.6",
@@ -95,6 +96,8 @@
     "commitlint": "commitlint",
     "clean": "tsc --build --clean && rm -rf out dist node_modules *.vsix",
     "test": "jest",
+    "compile:e2e": "tsc -p test/e2e/tsconfig.json",
+    "test:e2e": "yarn compile && yarn bundle:extension && yarn compile:e2e && node out/e2e/runTests.js",
     "prepare": "husky"
   }
 }
