@@ -55,9 +55,9 @@ jobs:
           gh release download "v$RELEASE_VERSION" -D ./extensions
       - name: Publish to Marketplace
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          VSCE_PERSONAL_ACCESS_TOKEN: ${{ secrets.VSCE_PERSONAL_ACCESS_TOKEN }}
         run: |
-          find ./extensions -name "*.vsix" -exec npx vsce publish --skip-duplicate --pat "$VSCE_PAT" --packagePath {} \;
+          find ./extensions -name "*.vsix" -exec npx vsce publish --skip-duplicate --pat "$VSCE_PERSONAL_ACCESS_TOKEN" --packagePath {} \;
 
   publish-open-vsx:
     name: Publish to Open VSX Registry
@@ -83,6 +83,6 @@ jobs:
           gh release download "v$RELEASE_VERSION" -D ./extensions
       - name: Publish to Open VSX
         env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+          IDEE_OVSX_PAT: ${{ secrets.IDEE_OVSX_PAT }}
         run: |
-          find ./extensions -name "*.vsix" -exec npx ovsx publish --skip-duplicate {} -p "$OVSX_PAT" \;
+          find ./extensions -name "*.vsix" -exec npx ovsx publish --skip-duplicate {} -p "$IDEE_OVSX_PAT" \;
