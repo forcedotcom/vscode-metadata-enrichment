@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getMessage } from '../../src/utils/localization';
+import { getMessage } from '../../../src/utils/localization';
 
 describe('getMessage', () => {
   it('returns the localized string for a valid NLS key with substituted arguments', () => {

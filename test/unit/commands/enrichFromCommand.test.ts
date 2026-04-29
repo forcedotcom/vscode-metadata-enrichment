@@ -16,8 +16,8 @@
 
 import type * as vscodeTypes from 'vscode';
 const vscode = require('vscode') as typeof import('vscode');
-import { METADATA_ENRICH_COMMAND } from '../../src/constants/constants';
-import { registerMetadataEnrichCommand } from '../../src/commands/enrichFromCommand';
+import { METADATA_ENRICH_COMMAND } from '../../../src/constants/constants';
+import { registerMetadataEnrichCommand } from '../../../src/commands/enrichFromCommand';
 
 jest.mock('../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
 jest.mock('../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
@@ -31,13 +31,13 @@ jest.mock('../../src/flows/executeEnrichment', () => ({
   executeEnrichment: jest.fn().mockResolvedValue(undefined)
 }));
 
-import { pickMetadataType } from '../../src/flows/inputMetadataType';
-import { inputComponentNames } from '../../src/flows/inputComponentNames';
-import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
-import { resolveProject } from '../../src/flows/resolveProject';
-import { buildEligibleComponents } from '../../src/flows/buildEligibleComponents';
-import { executeEnrichment } from '../../src/flows/executeEnrichment';
-import { mockConnection } from '../__mocks__/mocks';
+import { pickMetadataType } from '../../../src/flows/inputMetadataType';
+import { inputComponentNames } from '../../../src/flows/inputComponentNames';
+import { pickOrgAndConnect } from '../../../src/flows/connectToOrg';
+import { resolveProject } from '../../../src/flows/resolveProject';
+import { buildEligibleComponents } from '../../../src/flows/buildEligibleComponents';
+import { executeEnrichment } from '../../../src/flows/executeEnrichment';
+import { mockConnection } from '../../e2e/__mocks__/mocks';
 
 describe('registerMetadataEnrichCommand', () => {
   const mockComponent = { fullName: 'myComp', name: 'myComp' };

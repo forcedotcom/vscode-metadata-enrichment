@@ -16,8 +16,8 @@
 
 import type * as vscodeTypes from 'vscode';
 const vscode = require('vscode') as typeof import('vscode');
-import { METADATA_ENRICH_CONTEXT_COMMAND } from '../../src/constants/constants';
-import { registerMetadataEnrichContextCommand } from '../../src/commands/enrichFromContextMenu';
+import { METADATA_ENRICH_CONTEXT_COMMAND } from '../../../src/constants/constants';
+import { registerMetadataEnrichContextCommand } from '../../../src/commands/enrichFromContextMenu';
 
 jest.mock('../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
 jest.mock('../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
@@ -30,12 +30,12 @@ jest.mock('../../src/flows/executeEnrichment', () => ({
   executeEnrichment: jest.fn().mockResolvedValue(undefined)
 }));
 
-import { resolveProject } from '../../src/flows/resolveProject';
-import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
-import { buildEligibleComponentsFromPath } from '../../src/flows/buildEligibleComponents';
-import { isEligibleEnrichmentPath } from '../../src/utils/pathValidator';
-import { executeEnrichment } from '../../src/flows/executeEnrichment';
-import { mockConnection } from '../__mocks__/mocks';
+import { resolveProject } from '../../../src/flows/resolveProject';
+import { pickOrgAndConnect } from '../../../src/flows/connectToOrg';
+import { buildEligibleComponentsFromPath } from '../../../src/flows/buildEligibleComponents';
+import { isEligibleEnrichmentPath } from '../../../src/utils/pathValidator';
+import { executeEnrichment } from '../../../src/flows/executeEnrichment';
+import { mockConnection } from '../../e2e/__mocks__/mocks';
 
 describe('registerMetadataEnrichContextCommand', () => {
   const mockUri = { fsPath: '/workspace/force-app/main/default/lwc/myComp' } as vscodeTypes.Uri;

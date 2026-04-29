@@ -16,7 +16,7 @@
 
 import * as vscode from 'vscode';
 import { SfProject } from '@salesforce/core';
-import { resolveProject } from '../../src/flows/resolveProject';
+import { resolveProject } from '../../../src/flows/resolveProject';
 
 jest.mock('@salesforce/core', () => ({
   SfProject: { resolve: jest.fn() }
