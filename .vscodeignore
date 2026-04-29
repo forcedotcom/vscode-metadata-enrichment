@@ -21,6 +21,7 @@ commitlint.config.cjs
 
 # Package manager
 yarn.lock
+node_modules/**
 
 # Test files
 jest.config.js

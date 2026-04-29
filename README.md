@@ -2,13 +2,13 @@
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/license/apache-2-0)
 
-The Salesforce Metadata Enrichment Extension provides capabi your Visual Studio Code 
+This extension provides the capability to enrich metadata directly from your Visual Studio Code via the command palette or within the context menu.
 
 ## Install
 
 This extension can be installed from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/vs).
 
-Alternatively, it can be found in the [VSX Registry](https://open-vsx.org/) to install across flavors of VS Code forks.
+Alternatively, it is also in the [Open VSX Registry](https://open-vsx.org/) to install across VS Code forks.
 
 ## Developing
 
