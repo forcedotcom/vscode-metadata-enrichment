@@ -3,10 +3,12 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Release version (e.g. 1.2.3)'
-        required: true
-        type: string
+      increment_type:
+        description: 'Version increment type'
+        required: false
+        type: choice
+        options: [patch, minor, major]
+        default: patch
 
 jobs:
   package:
@@ -14,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      RELEASE_VERSION: ${{ inputs.version }}
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,17 +28,21 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - name: Bump version
+        id: bump
+        env:
+          INCREMENT_TYPE: ${{ inputs.increment_type }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm version "$RELEASE_VERSION" --no-git-tag-version
+          NEW_VERSION=$(npm version "$INCREMENT_TYPE" --no-git-tag-version | sed 's/^v//')
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           git add package.json
-          git commit -m "chore: bump version to $RELEASE_VERSION [skip ci]"
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
           git push
       - run: yarn vscode:package
       - uses: actions/upload-artifact@v4
         with:
-          name: vsix-${{ inputs.version }}
+          name: vsix-${{ steps.bump.outputs.version }}
           path: '*.vsix'
 
   tag-and-release:
@@ -46,7 +52,7 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_VERSION: ${{ needs.package.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,7 +60,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/download-artifact@v4
         with:
-          name: vsix-${{ inputs.version }}
+          name: vsix-${{ needs.package.outputs.version }}
           path: ./extensions
       - name: Create tag
         run: |
