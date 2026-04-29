@@ -16,27 +16,27 @@
 
 import type * as vscodeTypes from 'vscode';
 const vscode = require('vscode') as typeof import('vscode');
-import { METADATA_ENRICH_COMMAND } from '../../src/constants/constants';
-import { registerMetadataEnrichCommand } from '../../src/commands/enrichFromCommand';
+import { METADATA_ENRICH_COMMAND } from '../../../src/constants/constants';
+import { registerMetadataEnrichCommand } from '../../../src/commands/enrichFromCommand';
 
-jest.mock('../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
-jest.mock('../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
-jest.mock('../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
-jest.mock('../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
-jest.mock('../../src/flows/buildEligibleComponents', () => ({ buildEligibleComponents: jest.fn() }));
-jest.mock('../../src/utils/outputChannel', () => ({
+jest.mock('../../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
+jest.mock('../../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
+jest.mock('../../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
+jest.mock('../../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
+jest.mock('../../../src/flows/buildEligibleComponents', () => ({ buildEligibleComponents: jest.fn() }));
+jest.mock('../../../src/utils/outputChannel', () => ({
   getOutputChannel: jest.fn().mockReturnValue({ appendLine: jest.fn(), show: jest.fn() })
 }));
-jest.mock('../../src/flows/executeEnrichment', () => ({
+jest.mock('../../../src/flows/executeEnrichment', () => ({
   executeEnrichment: jest.fn().mockResolvedValue(undefined)
 }));
 
-import { pickMetadataType } from '../../src/flows/inputMetadataType';
-import { inputComponentNames } from '../../src/flows/inputComponentNames';
-import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
-import { resolveProject } from '../../src/flows/resolveProject';
-import { buildEligibleComponents } from '../../src/flows/buildEligibleComponents';
-import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { pickMetadataType } from '../../../src/flows/inputMetadataType';
+import { inputComponentNames } from '../../../src/flows/inputComponentNames';
+import { pickOrgAndConnect } from '../../../src/flows/connectToOrg';
+import { resolveProject } from '../../../src/flows/resolveProject';
+import { buildEligibleComponents } from '../../../src/flows/buildEligibleComponents';
+import { executeEnrichment } from '../../../src/flows/executeEnrichment';
 import { mockConnection } from '../__mocks__/mocks';
 
 describe('registerMetadataEnrichCommand', () => {

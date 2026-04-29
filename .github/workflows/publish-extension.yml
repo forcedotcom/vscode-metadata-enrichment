@@ -1,4 +1,4 @@
-name: Publish
+name: Publish Extension
 
 on:
   release:
@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag to publish (e.g. 1.2.3 — must match an existing release)'
-        required: true
+        description: 'Version tag to publish (e.g. 1.2.3 — must match an existing release). Defaults to version in package.json.'
+        required: false
         type: string
 
 jobs:
@@ -17,6 +17,9 @@ jobs:
     outputs:
       version: ${{ steps.resolve.outputs.version }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Resolve version from trigger
         id: resolve
         env:
@@ -26,8 +29,10 @@ jobs:
         run: |
           if [ "$EVENT_NAME" = "release" ]; then
             VERSION="${RELEASE_TAG#v}"
-          else
+          elif [ -n "$INPUT_VERSION" ]; then
             VERSION="$INPUT_VERSION"
+          else
+            VERSION=$(node -p "require('./package.json').version")
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 

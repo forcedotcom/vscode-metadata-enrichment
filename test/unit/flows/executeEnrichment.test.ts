@@ -16,7 +16,7 @@
 
 import * as vscode from 'vscode';
 import { EnrichmentHandler, EnrichmentMetrics, FileProcessor } from '@salesforce/metadata-enrichment';
-import { executeEnrichment } from '../../src/flows/executeEnrichment';
+import { executeEnrichment } from '../../../src/flows/executeEnrichment';
 import { mockOutputChannel, mockProgress, mockConnection } from '../__mocks__/mocks';
 
 jest.mock('@salesforce/metadata-enrichment', () => ({

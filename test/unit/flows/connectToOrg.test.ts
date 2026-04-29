@@ -16,7 +16,7 @@
 
 import * as vscode from 'vscode';
 import { AuthInfo, Org } from '@salesforce/core';
-import { pickOrgAndConnect } from '../../src/flows/connectToOrg';
+import { pickOrgAndConnect } from '../../../src/flows/connectToOrg';
 
 jest.mock('@salesforce/core', () => ({
   AuthInfo: { listAllAuthorizations: jest.fn() },

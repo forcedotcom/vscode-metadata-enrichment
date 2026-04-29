@@ -15,7 +15,7 @@
  */
 
 import * as vscode from 'vscode';
-import { inputComponentNames } from '../../src/flows/inputComponentNames';
+import { inputComponentNames } from '../../../src/flows/inputComponentNames';
 
 describe('inputComponentNames', () => {
   it('returns metadataEntries for the given type and a single component name', async () => {

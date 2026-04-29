@@ -16,7 +16,7 @@
 
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { EnrichmentRecords, SourceComponentProcessor } from '@salesforce/metadata-enrichment';
-import { buildEligibleComponents, buildEligibleComponentsFromPath } from '../../src/flows/buildEligibleComponents';
+import { buildEligibleComponents, buildEligibleComponentsFromPath } from '../../../src/flows/buildEligibleComponents';
 import { mockOutputChannel, mockProject } from '../__mocks__/mocks';
 
 jest.mock('@salesforce/source-deploy-retrieve', () => ({

@@ -15,7 +15,7 @@
  */
 
 import * as vscode from 'vscode';
-import { pickMetadataType } from '../../src/flows/inputMetadataType';
+import { pickMetadataType } from '../../../src/flows/inputMetadataType';
 
 describe('pickMetadataType', () => {
   it('returns the selected QuickPickItem', async () => {

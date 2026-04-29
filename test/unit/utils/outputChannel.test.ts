@@ -15,7 +15,7 @@
  */
 
 import * as vscode from 'vscode';
-import { getOutputChannel, disposeOutputChannel } from '../../src/utils/outputChannel';
+import { getOutputChannel, disposeOutputChannel } from '../../../src/utils/outputChannel';
 
 const mockChannel = { appendLine: jest.fn(), show: jest.fn(), dispose: jest.fn() };
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isEligibleEnrichmentPath } from '../../src/utils/pathValidator';
+import { isEligibleEnrichmentPath } from '../../../src/utils/pathValidator';
 
 jest.mock('@salesforce/source-deploy-retrieve', () => ({
   RegistryAccess: jest.fn().mockImplementation(() => ({
