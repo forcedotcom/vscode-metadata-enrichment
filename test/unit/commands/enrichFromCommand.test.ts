@@ -19,15 +19,15 @@ const vscode = require('vscode') as typeof import('vscode');
 import { METADATA_ENRICH_COMMAND } from '../../../src/constants/constants';
 import { registerMetadataEnrichCommand } from '../../../src/commands/enrichFromCommand';
 
-jest.mock('../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
-jest.mock('../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
-jest.mock('../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
-jest.mock('../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
-jest.mock('../../src/flows/buildEligibleComponents', () => ({ buildEligibleComponents: jest.fn() }));
-jest.mock('../../src/utils/outputChannel', () => ({
+jest.mock('../../../src/flows/inputMetadataType', () => ({ pickMetadataType: jest.fn() }));
+jest.mock('../../../src/flows/inputComponentNames', () => ({ inputComponentNames: jest.fn() }));
+jest.mock('../../../src/flows/connectToOrg', () => ({ pickOrgAndConnect: jest.fn() }));
+jest.mock('../../../src/flows/resolveProject', () => ({ resolveProject: jest.fn() }));
+jest.mock('../../../src/flows/buildEligibleComponents', () => ({ buildEligibleComponents: jest.fn() }));
+jest.mock('../../../src/utils/outputChannel', () => ({
   getOutputChannel: jest.fn().mockReturnValue({ appendLine: jest.fn(), show: jest.fn() })
 }));
-jest.mock('../../src/flows/executeEnrichment', () => ({
+jest.mock('../../../src/flows/executeEnrichment', () => ({
   executeEnrichment: jest.fn().mockResolvedValue(undefined)
 }));
 
