@@ -11,5 +11,5 @@
     "types": ["mocha", "node"]
   },
   "include": ["./**/*.ts"],
-  "exclude": ["../../node_modules"]
+  "exclude": ["../../node_modules", "./__mocks__/**"]
 }
