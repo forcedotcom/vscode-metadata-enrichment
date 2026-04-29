@@ -2,7 +2,7 @@
   "name": "salesforce-metadata-enrichment",
   "displayName": "Salesforce Metadata Enrichment",
   "description": "Enrich Salesforce metadata components in your local DX project directly from Visual Studio Code.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "salesforce",
   "license": "Apache-2.0",
   "repository": {
