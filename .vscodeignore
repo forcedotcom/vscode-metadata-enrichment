@@ -37,3 +37,12 @@ how_to_license.md
 # VCS
 .git/
 .gitignore
+
+# node_modules: exclude type declarations and duplicate dist formats that don't affect extension in runtime
+node_modules/**/*.d.ts
+node_modules/**/*.d.cts
+node_modules/**/*.d.mts
+node_modules/**/dist/umd/**
+node_modules/**/dist/iife/**
+node_modules/**/dist/esm/**
+node_modules/**/dist/es6/**
